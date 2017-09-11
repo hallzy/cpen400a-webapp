@@ -1,0 +1,99 @@
+/* Width of the content in the website is 1000px and the content is centred */
+/* in the page */
+
+/* UBC Colours: */
+:root {
+  --ubc-blue: #002145;
+  --ubc-white: #FFFFFF;
+  --ubc-secondary-blue-1: #0055b7;
+  --ubc-secondary-blue-2: #00a7e1;
+  --ubc-secondary-blue-3: #40b4e5;
+  --ubc-secondary-blue-4: #6ec4e8;
+  --ubc-secondary-blue-5: #97d4e9;
+}
+
+body {
+  width: 1000px;
+  margin: auto;
+  background-color: var(--ubc-blue);
+  border: 5px solid white;
+}
+
+.product {
+  margin: 20px;
+  padding: 20px;
+  float: right;
+  text-align: center;
+  background-color: var(--ubc-secondary-blue-5);
+}
+
+.product:hover {
+  cursor: pointer;
+  background-color: var(--ubc-secondary-blue-1);
+  color: white;
+}
+
+#productList img {
+  width: 200px;
+  height: 200px;
+}
+
+.title {
+  text-align: center;
+  font-weight: normal;
+  width: 200px;
+  margin: 0px;
+}
+
+.product:hover .title {
+  font-weight: bold;
+}
+
+#NavigationMenu {
+  float: left;
+  width: 150px;
+  padding: 0px;
+  border: 5px solid #002145;
+  list-style-type: none;
+  background-color: var(--ubc-secondary-blue-5);
+}
+
+#NavigationMenu li {
+  text-align: center;
+  padding: 2px 0px;
+  border: 3px solid #002145;
+  color: black;
+}
+
+/*
+Change the background to a darker blue when hovered and make the text bold
+white
+*/
+#NavigationMenu li:hover {
+  cursor: pointer;
+  background-color: var(--ubc-secondary-blue-1);
+  color: white;
+  font-weight: bold;
+}
+
+/*
+Normally the price will be hidden, and up 50px from its normal position.
+The background for the price will be a grey with 0.75 opacity
+*/
+.price {
+  visibility: hidden;
+  position: relative;
+  margin-top: -50px;
+  background: rgba(169, 169, 169, 0.75);
+  color: black;
+}
+
+/* When hovered, we can show the price */
+.product:hover .price {
+  visibility: visible;
+}
+
+/* Add to this */
+#footer {
+  color: white;
+}
