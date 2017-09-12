@@ -47,12 +47,17 @@ body {
   float: right;
   text-align: center;
   background-color: var(--ubc-secondary-blue-5);
+  color: var(--ubc-blue);
 }
 
 .product:hover {
   cursor: pointer;
   background-color: var(--ubc-secondary-blue-1);
   color: white;
+}
+
+#productListDiv {
+  display: inline-block;
 }
 
 #productList img {
