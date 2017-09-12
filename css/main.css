@@ -122,7 +122,24 @@ The background for the price will be a grey with 0.75 opacity
   visibility: visible;
 }
 
-/* Add to this */
 #footer {
-  color: white;
+  color: var(--ubc-blue);
+  background-color: var(--ubc-secondary-blue-5);
+  width: 220px;
+  text-align: center;
+  padding: 5px 380px;
+  margin: auto;
+  margin-bottom: 20px;
+  border: 3px solid white;
+}
+
+#footer a {
+  color: var(--ubc-secondary-blue-1);
+  text-decoration: none;
+}
+
+#footer a:hover {
+  /* color: var(--ubc-secondary-blue-2); */
+  text-decoration: none;
+  font-weight: bold;
 }
