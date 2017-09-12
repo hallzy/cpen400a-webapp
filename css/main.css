@@ -42,18 +42,20 @@ body {
 }
 
 .product {
-  margin: 20px;
+  margin: 16px;
   padding: 20px;
   float: right;
   text-align: center;
   background-color: var(--ubc-secondary-blue-5);
   color: var(--ubc-blue);
+  border: 3px solid var(--ubc-blue);
 }
 
 .product:hover {
   cursor: pointer;
   background-color: var(--ubc-secondary-blue-1);
   color: white;
+  border: 3px solid white;
 }
 
 #productListDiv {
@@ -103,6 +105,7 @@ white
   background-color: var(--ubc-secondary-blue-1);
   color: white;
   font-weight: bold;
+  border: 2px solid white;
 }
 
 /*
@@ -133,13 +136,22 @@ The background for the price will be a grey with 0.75 opacity
   border: 3px solid white;
 }
 
+#footer:hover {
+  background-color: var(--ubc-secondary-blue-1);
+  color: white;
+}
+
 #footer a {
   color: var(--ubc-secondary-blue-1);
   text-decoration: none;
 }
+#footer:hover a {
+  color: var(--ubc-secondary-blue-5);
+  text-decoration: none;
+}
 
 #footer a:hover {
-  /* color: var(--ubc-secondary-blue-2); */
+  color: var(--ubc-secondary-blue-5);
   text-decoration: none;
   font-weight: bold;
 }
