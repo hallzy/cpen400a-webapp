@@ -16,7 +16,29 @@ body {
   width: 1000px;
   margin: auto;
   background-color: var(--ubc-blue);
+  border: 3px solid white;
+}
+
+#logo img {
+  width: 160px;
+  height: 218px;
+}
+
+#logo {
+  display: inline-block;
+  padding: 20px;
   border: 5px solid white;
+}
+
+#welcomeBanner img {
+  width: 735px;
+  height: 218px;
+}
+
+#welcomeBanner {
+  display: inline-block;
+  border: 5px solid white;
+  padding: 20px;
 }
 
 .product {
@@ -49,27 +71,29 @@ body {
   font-weight: bold;
 }
 
-#NavigationMenu {
+#navigationMenu {
+  display: inline-block;
   float: left;
-  width: 150px;
+  width: 146px;
   padding: 0px;
-  border: 5px solid var(--ubc-blue);
+  margin-left: 5px;
+  margin-top: 19px;
   list-style-type: none;
   background-color: var(--ubc-secondary-blue-5);
 }
 
-#NavigationMenu li {
+#navigationMenu li {
   text-align: center;
   padding: 2px 0px;
   border: 3px solid var(--ubc-blue);
-  color: black;
+  color: var(--ubc-blue);
 }
 
 /*
 Change the background to a darker blue when hovered and make the text bold
 white
 */
-#NavigationMenu li:hover {
+#navigationMenu li:hover {
   cursor: pointer;
   background-color: var(--ubc-secondary-blue-1);
   color: white;
