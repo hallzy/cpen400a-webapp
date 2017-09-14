@@ -58,8 +58,9 @@ body {
   border: 3px solid white;
 }
 
-#productListDiv {
+#productList {
   display: inline-block;
+  width: 849px;
 }
 
 #productList img {
@@ -81,10 +82,14 @@ body {
 #navigationMenu {
   display: inline-block;
   float: left;
+}
+
+#navigationMenu ul {
+  display: inline-block;
+  float: left;
   width: 146px;
   padding: 0px;
   margin-left: 5px;
-  margin-top: 19px;
   list-style-type: none;
   background-color: var(--ubc-secondary-blue-5);
 }
