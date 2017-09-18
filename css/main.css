@@ -122,7 +122,8 @@ The background for the price will be a grey with 0.75 opacity
   margin-top: -50px;
   background: rgba(169, 169, 169, 0.75);
   color: black;
-}
+  font-weight: bold;
+  }
 
 /* When hovered, we can show the price */
 .product:hover .price {
