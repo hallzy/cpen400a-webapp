@@ -75,10 +75,34 @@ body {
   width: 849px;
 }
 
-#productList img {
+.product_images {
+  position:relative;
+  left: 0;
+  top: 0;
+}
+
+.product_pic {
   width: 200px;
   height: 200px;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
+
+.cart_image {
+  visibility: hidden;
+  width: 200px;
+  height: 200px;
+  position: relative;
+  background: rgba(110, 110, 110, 0.75);
+  top: 0;
+  left: 0;
+}
+
+.product:hover .cart_image {
+  visibility: visible;
+}
+
 
 .title {
   text-align: center;
