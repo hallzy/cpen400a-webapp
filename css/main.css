@@ -99,10 +99,39 @@ body {
   left: 0;
 }
 
+.add_button {
+  visibility: hidden;
+  width: 80px;
+  height: 20px;
+  position: absolute;
+  background: green;
+  top: 100px;
+  left: 10px;
+}
+
+.remove_button {
+  visibility: hidden;
+  width: 80px;
+  height: 20px;
+  position: absolute;
+  background: red;
+  top: 100px;
+  left: 110px;
+}
+
 .product:hover .cart_image {
   visibility: visible;
 }
 
+.product:hover .add_button {
+  cursor: pointer;
+  visibility: visible;
+}
+
+.product:hover .remove_button {
+  cursor: pointer;
+  visibility: visible;
+}
 
 .title {
   text-align: center;
