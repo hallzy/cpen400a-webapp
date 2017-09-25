@@ -34,10 +34,23 @@ body {
   height: 218px;
 }
 
+#welcomeBanner h1 {
+  position: relative;
+  top: -8px;
+  left: 50px;
+  text-align: left;
+  margin-top: -45px;
+  margin-bottom: 0px;
+  padding: 0;
+  color: var(--ubc-white);
+  font-size: 45px;
+}
+
 #welcomeBanner {
   display: inline-block;
   border: 5px solid var(--ubc-white);
   padding: 20px;
+  padding-bottom: 13px;
 }
 
 .product {
