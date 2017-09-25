@@ -37,8 +37,8 @@ body {
 #welcomeBanner h1 {
   position: relative;
   top: -8px;
-  left: 50px;
-  text-align: left;
+  right: 20px;
+  text-align: right;
   margin-top: -45px;
   margin-bottom: 0px;
   padding: 0;
