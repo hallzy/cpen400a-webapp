@@ -98,3 +98,22 @@ function removeFromCart(productName) {
     console.log(products)
   }
 }
+
+// Show the contents of the cart
+function showCart() {
+  // This will be the message we will put into the alert
+  var message = "";
+  // Iterate through the cart
+  for (var productName in cart) {
+    // Form the message for each element in the cart
+    message += productName + ": " + cart[productName] + "\n";
+  }
+  // If after all this, the message is emtpy then our cart must be empty.
+  if (message == "") {
+    alert("Your Cart is Empty!");
+  }
+  else {
+    // Produce an alert.
+    alert(message);
+  }
+}
