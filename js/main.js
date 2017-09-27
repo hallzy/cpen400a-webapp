@@ -37,9 +37,10 @@ function checkInactivity() {
   // If 30 seconds has passed then give an alert and reset the timer and the
   // timer
   if (inactiveTime >= 30) {
+    clearInterval(timer);
     alert("Hey there! Are you still planning to buy something?");
+    console.log("sup yo")
     resetTimer();
-    inactiveTime = 0;
   }
 }
 
