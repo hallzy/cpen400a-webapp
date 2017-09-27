@@ -19,6 +19,8 @@ products.PC2           = 5;
 products.PC3           = 5;
 products.Tent          = 5;
 
+var inactiveTime = 0;
+
 // Use this to set the inactivity timer
 function setTimer(seconds) {
   timer = setTimeout(function() {
