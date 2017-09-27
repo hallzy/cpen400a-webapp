@@ -22,26 +22,41 @@ products.Tent          = 5;
 var inactiveTime = 0;
 
 // Use this to set the inactivity timer
-function setTimer(seconds) {
-  timer = setTimeout(function() {
-    return alert("Hey there! Are you still planning to buy something?");
-  }, seconds*1000);
+var timer;
+// This function is used to set the timer
+function setTimer() {
+  // Set an interval timer for 1 second intervals. Every 1 second, call the
+  // checkInactivity Function
+  timer = setInterval(checkInactivity, 1000);
 }
 
-// Set the timer initially
-var timerLength = 30;
-var timer = setTimer(timerLength);
+// This function is called every iteration of the interval timer. Here, we
+// increment the inactiveTime variable.
+function checkInactivity() {
+  inactiveTime++;
+  // If 30 seconds has passed then give an alert and reset the timer and the
+  // timer
+  if (inactiveTime >= 30) {
+    alert("Hey there! Are you still planning to buy something?");
+    resetTimer();
+    inactiveTime = 0;
+  }
+}
+
+// Set the timer to start running
+setTimer();
 
 // Reset the inactivity Timer
-function resetTimer(seconds) {
-  clearTimeout(timer);
-  timer = setTimer(seconds);
+function resetTimer() {
+  clearInterval(timer);
+  setTimer();
+  inactiveTime = 0;
 }
 
 // Add the item to the users cart.
 function addToCart(productName) {
   // Clear the timeout because the user has made an action.
-  clearTimeout(timer);
+  clearInterval(timer);
 
   // Only add the item if we have stock left
   if (products[productName] > 0) {
@@ -60,7 +75,7 @@ function addToCart(productName) {
     products[productName]--;
   }
   // Reset the Timer now that we are done.
-  resetTimer(timerLength);
+  resetTimer();
 
   // output the current state of the product stock and cart if we are debugging.
   if (debug) {
@@ -72,7 +87,7 @@ function addToCart(productName) {
 // Remove item from the cart
 function removeFromCart(productName) {
   // Clear the timeout because the user has made an action.
-  clearTimeout(timer);
+  clearInterval(timer);
 
   // Only remove the item from the cart, if that item actually exists in the
   // cart already.
@@ -92,7 +107,7 @@ function removeFromCart(productName) {
     alert("That item isn't in your cart!");
   }
   // Reset the Timer now that we are done.
-  resetTimer(timerLength);
+  resetTimer();
 
   // output the current state of the product stock and cart if we are debugging.
   if (debug) {
