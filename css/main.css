@@ -91,13 +91,13 @@ body {
 
 #show_cart {
   float: right;
-  margin-right: 20px;
-  margin-top: 20px;
+  margin-right: 15px;
+  margin-top: 15px;
   background-image: url('../images/cart.png');
   background-color: var(--ubc-secondary-blue-5);
-  background-size: 100px;
-  height: 105px;
-  width: 110px;
+  background-size: 50px;
+  height: 52px;
+  width: 55px;
   border: 5px solid var(--ubc-blue);
 }
 
