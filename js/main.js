@@ -65,16 +65,15 @@ function addToCart(productName) {
     // to 1
     if (cart[productName] == undefined) {
       cart[productName] = 1;
-	    alert("Item added in your cart!");
     }
     // Otherwise, it is already in the cart, so just increment the quantity of
     // the item.
     else {
       cart[productName]++;
-	    alert("Item added in your cart!");
     }
     // Now reduce the overall stock of the item because it is now in someones
     // cart.
+    alert("Item added in your cart!");
     products[productName]--;
   }
   // Reset the Timer now that we are done.

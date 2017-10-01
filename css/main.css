@@ -96,8 +96,8 @@ body {
   background-image: url('../images/cart.png');
   background-color: var(--ubc-secondary-blue-5);
   background-size: 50px;
-  height: 52px;
-  width: 55px;
+  height: 58px;
+  width: 60px;
   border: 5px solid var(--ubc-blue);
 }
 
