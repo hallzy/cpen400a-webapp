@@ -1,5 +1,5 @@
 // Set this to true to get some useful console outputs
-var debug = true;
+const debug = true;
 
 // Current user's cart (initially, empty).
 var cart = [];
@@ -23,6 +23,11 @@ var inactiveTime = 0;
 
 // Use this to set the inactivity timer
 var timer;
+
+// Set the timer to start running
+setTimer();
+
+
 // This function is used to set the timer
 function setTimer() {
   // Set an interval timer for 1 second intervals. Every 1 second, call the
@@ -39,13 +44,9 @@ function checkInactivity() {
   if (inactiveTime >= 30) {
     clearInterval(timer);
     alert("Hey there! Are you still planning to buy something?");
-    console.log("sup yo")
     resetTimer();
   }
 }
-
-// Set the timer to start running
-setTimer();
 
 // Reset the inactivity Timer
 function resetTimer() {
@@ -96,7 +97,7 @@ function removeFromCart(productName) {
   if (cart[productName] != undefined) {
     // Remove it from the cart.
     cart[productName]--;
-	  alert("Item removed from your cart!");
+    alert("Item removed from your cart!");
     // Add it to the total stock
     products[productName]++;
     // If the cart now has 0 of that item, then delete it from the cart
