@@ -1,3 +1,7 @@
+// *****************************************************************************
+// ***   Variable Declarations
+// *****************************************************************************
+
 // Set this to true to get some useful console outputs
 const debug = true;
 
@@ -21,39 +25,48 @@ products.Tent          = 5;
 
 var inactiveTime = 0;
 
-// Use this to set the inactivity timer
-var timer;
+// Timeout time is 30 seconds
+var inactiveTimeLimit = 30;
 
-// Set the timer to start running
-setTimer();
+// *****************************************************************************
+// ***   Function Declarations
+// *****************************************************************************
 
+// My timer declaration
+var customTimer = function(inactiveTimeLimit) {
+  this.timer;
 
-// This function is used to set the timer
-function setTimer() {
-  // Set an interval timer for 1 second intervals. Every 1 second, call the
-  // checkInactivity Function
-  timer = setInterval(checkInactivity, 1000);
-}
-
-// This function is called every iteration of the interval timer. Here, we
-// increment the inactiveTime variable.
-function checkInactivity() {
-  inactiveTime++;
-  // If 30 seconds has passed then give an alert and reset the timer and the
-  // timer
-  if (inactiveTime >= 30) {
-    clearInterval(timer);
-    alert("Hey there! Are you still planning to buy something?");
-    resetTimer();
+  // if a value was passed, use it, otherwise default to 30
+  if (inactiveTimeLimit == undefined) {
+    this.inactiveTimeLimit = 30;
   }
-}
+  else {
+    this.inactiveTimeLimit = inactiveTimeLimit;
+  }
 
-// Reset the inactivity Timer
-function resetTimer() {
-  clearInterval(timer);
-  setTimer();
-  inactiveTime = 0;
-}
+  this.set = function() {
+    var that = this;
+    // Set an interval timer for 1 second intervals. Every 1 second, call the
+    // checkInactivity Function
+    var checkInactivity = function() {
+      inactiveTime++;
+      // If inactiveTimeLimit seconds has passed then give an alert and reset
+      // the timer and the timer
+      if (inactiveTime >= that.inactiveTimeLimit) {
+        clearInterval(that.timer);
+        alert("Hey there! Are you still planning to buy something?");
+        that.reset();
+      }
+    }
+    this.timer = setInterval(checkInactivity, 1000);
+  }
+  // Reset the inactivity Timer
+  this.reset = function() {
+    clearInterval(this.timer);
+    this.set();
+    inactiveTime = 0;
+  }
+};
 
 // Add the item to the users cart.
 function addToCart(productName) {
@@ -78,7 +91,7 @@ function addToCart(productName) {
     products[productName]--;
   }
   // Reset the Timer now that we are done.
-  resetTimer();
+  timer.reset();
 
   // output the current state of the product stock and cart if we are debugging.
   if (debug) {
@@ -111,7 +124,7 @@ function removeFromCart(productName) {
     alert("That item isn't in your cart!");
   }
   // Reset the Timer now that we are done.
-  resetTimer();
+  timer.reset();
 
   // output the current state of the product stock and cart if we are debugging.
   if (debug) {
@@ -138,3 +151,12 @@ function showCart() {
     alert(message);
   }
 }
+
+
+// *****************************************************************************
+// ***   Function Executions
+// *****************************************************************************
+
+// Set the timer to start running
+var timer = new customTimer(inactiveTimeLimit);
+timer.set();
