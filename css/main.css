@@ -56,7 +56,7 @@ body {
 .product {
   margin: 16px;
   padding: 20px;
-  float: right;
+  float: left;
   text-align: center;
   background-color: var(--ubc-secondary-blue-5);
   color: var(--ubc-blue);
@@ -72,7 +72,8 @@ body {
 
 #productList {
   display: inline-block;
-  width: 849px;
+  width: 834px;
+  margin-left: 14px;
 }
 
 .product_images {
