@@ -28,9 +28,18 @@ var inactiveTime = 0;
 // Timeout time is 30 seconds
 var inactiveTimeLimit = 30;
 
+// Global Timer variable
+var timer;
+
 // *****************************************************************************
 // ***   Function Declarations
 // *****************************************************************************
+
+window.onload = function() {
+  // Set the timer to start running
+  timer = new customTimer(inactiveTimeLimit);
+  timer.set();
+}
 
 // My timer declaration
 var customTimer = function(inactiveTimeLimit) {
@@ -151,12 +160,3 @@ function showCart() {
     alert(message);
   }
 }
-
-
-// *****************************************************************************
-// ***   Function Executions
-// *****************************************************************************
-
-// Set the timer to start running
-var timer = new customTimer(inactiveTimeLimit);
-timer.set();
