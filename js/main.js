@@ -84,6 +84,12 @@ window.onload = function() {
   timer.set();
 }
 
+// Prototype function for Product objects that computes the price of quantity
+// number of that item
+Product.prototype.computeNetPrice = function(quantity) {
+  return this.price * quantity;
+}
+
 // My timer declaration
 var customTimer = function(inactiveTimeLimit) {
   this.timer;
