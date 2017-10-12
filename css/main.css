@@ -91,20 +91,25 @@ body {
 }
 
 #show_cart {
-  float: right;
-  margin-right: 15px;
-  margin-top: 15px;
-  background-image: url('../images/cart.png');
+  position: fixed;
+  top: 0px;
+  right: 0px;
   background-color: var(--ubc-secondary-blue-5);
-  background-size: 50px;
-  height: 58px;
-  width: 60px;
+  height: 50px;
+  width: 100px;
+  z-index: 100;
   border: 5px solid var(--ubc-blue);
+  text-align: center;
+  color: var(--ubc-blue);
+  font-weight: bold;
+  font-size: 15px;
 }
 
 #show_cart:hover {
+  cursor: pointer;
   background-color: var(--ubc-secondary-blue-1);
   border: 5px solid var(--ubc-white);
+  color: var(--ubc-white);
 }
 
 .cart_image {

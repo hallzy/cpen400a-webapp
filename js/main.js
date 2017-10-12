@@ -6,7 +6,11 @@
 const debug = true;
 
 // Current user's cart (initially, empty).
-var cart = [];
+var Cart = function() {
+  this.price = 0;
+  this.items = [];
+}
+var cart = new Cart();
 
 var Product = function(name, price, imageUrl) {
   this.name     = name;
@@ -135,18 +139,19 @@ function addToCart(productName) {
   if (productName.quantity > 0) {
     // If the item is not already in the cart, then add it and set the quantity
     // to 1
-    if (cart[productName.product.name] == undefined) {
-      cart[productName.product.name] = 1;
+    if (cart.items[productName.product.name] == undefined) {
+      cart.items[productName.product.name] = 1;
     }
     // Otherwise, it is already in the cart, so just increment the quantity of
     // the item.
     else {
-      cart[productName.product.name]++;
+      cart.items[productName.product.name]++;
     }
     // Now reduce the overall stock of the item because it is now in someones
     // cart.
-    alert("Item added in your cart!");
+    // alert("Item added in your cart!");
     productName.quantity--;
+    updateCartPriceAdded(productName);
   }
   // Reset the Timer now that we are done.
   timer.reset();
@@ -165,17 +170,18 @@ function removeFromCart(productName) {
 
   // Only remove the item from the cart, if that item actually exists in the
   // cart already.
-  if (cart[productName.product.name] != undefined) {
+  if (cart.items[productName.product.name] != undefined) {
     // Remove it from the cart.
-    cart[productName.product.name]--;
-    alert("Item removed from your cart!");
+    cart.items[productName.product.name]--;
+    // alert("Item removed from your cart!");
     // Add it to the total stock
     productName.quantity++;
     // If the cart now has 0 of that item, then delete it from the cart
     // completely.
-    if (cart[productName.product.name] == 0) {
-      delete cart[productName.product.name];
+    if (cart.items[productName.product.name] == 0) {
+      delete cart.items[productName.product.name];
     }
+    updateCartPriceRemoved(productName);
   }
   // If the item doesn't exist, then give an alert to the user
   else {
@@ -196,9 +202,9 @@ function showCart() {
   // This will be the message we will put into the alert
   var message = "";
   // Iterate through the cart
-  for (var productName in cart) {
+  for (var productName in cart.items) {
     // Form the message for each element in the cart
-    message += productName + ": " + cart[productName] + "\n";
+    message += productName + ": " + cart.items[productName] + "\n";
   }
   // If after all this, the message is emtpy then our cart must be empty.
   if (message == "") {
@@ -209,3 +215,25 @@ function showCart() {
     alert(message);
   }
 }
+
+// Finds the current price of the cart, and redoes the button text
+function updateCartPrice(isAdding, productName) {
+  var item = productName.product;
+  if (isAdding) {
+    this.price += item.price;
+  }
+  else {
+    this.price -= item.price;
+  }
+  updateCartButton(this.price);
+}
+
+// Just update the text of the show cart button
+function updateCartButton(price) {
+  var str = "Cart ($"
+  str += price + ")";
+  document.getElementById("show_cart").textContent = str;
+}
+
+var updateCartPriceRemoved = updateCartPrice.bind(cart, false);
+var updateCartPriceAdded   = updateCartPrice.bind(cart, true);
