@@ -8,25 +8,68 @@ const debug = true;
 // Current user's cart (initially, empty).
 var cart = [];
 
+var Product = function(name, price, imageUrl) {
+  this.name     = name;
+  this.price    = price;
+  this.imageUrl = imageUrl;
+}
+
 // Overall stock of all items
-var products = [];
-products.Box1          = 5;
-products.Box2          = 5;
-products.Clothes1      = 5;
-products.Clothes2      = 5;
-products.Jeans         = 5;
-products.Keyboard      = 5;
-products.KeyboardCombo = 5;
-products.Mice          = 5;
-products.PC1           = 5;
-products.PC2           = 5;
-products.PC3           = 5;
-products.Tent          = 5;
+var products = {
+  'Box1' : {
+    'product'  : new Product('Box1', 10, 'images/products/Box1_$10.png'),
+    'quantity' : 5
+  },
+  'Box2' : {
+    'product'  : new Product('Box2', 5, 'images/products/Box2_$5.png'),
+    'quantity' : 5
+  },
+  'Clothes1' : {
+    'product'  : new Product('Clothes1', 20, 'images/products/Clothes1_$20.png'),
+    'quantity' : 5
+  },
+  'Clothes2' : {
+    'product'  : new Product('Clothes2', 30, 'images/products/Clothes2_$30.png'),
+    'quantity' : 5
+  },
+  'Jeans' : {
+    'product'  : new Product('Jeans', 50, 'images/products/Jeans_$50.png'),
+    'quantity' : 5
+  },
+  'Keyboard' : {
+    'product'  : new Product('Keyboard', 20, 'images/products/Keyboard_$20.png'),
+    'quantity' : 5
+  },
+  'KeyboardCombo' : {
+    'product'  : new Product('KeyboardCombo', 40, 'images/products/KeyboardCombo_$40.png'),
+    'quantity' : 5
+  },
+  'Mice' : {
+    'product'  : new Product('Mice', 20, 'images/products/Mice_$20.png'),
+    'quantity' : 5
+  },
+  'PC1' : {
+    'product'  : new Product('PC1', 350, 'images/products/PC1_$350.png'),
+    'quantity' : 5
+  },
+  'PC2' : {
+    'product'  : new Product('PC2', 400, 'images/products/PC2_$400.png'),
+    'quantity' : 5
+  },
+  'PC3' : {
+    'product'  : new Product('PC3', 300, 'images/products/PC3_$300.png'),
+    'quantity' : 5
+  },
+  'Tent' : {
+    'product'  : new Product('Tent', 100, 'images/products/Tent_$100.png'),
+    'quantity' : 5
+  },
+}
 
 var inactiveTime = 0;
 
-// Timeout time is 30 seconds
-var inactiveTimeLimit = 30;
+// Timeout time is 300 seconds
+var inactiveTimeLimit = 300;
 
 // Global Timer variable
 var timer;
@@ -83,21 +126,21 @@ function addToCart(productName) {
   clearInterval(timer);
 
   // Only add the item if we have stock left
-  if (products[productName] > 0) {
+  if (productName.quantity > 0) {
     // If the item is not already in the cart, then add it and set the quantity
     // to 1
-    if (cart[productName] == undefined) {
-      cart[productName] = 1;
+    if (cart[productName.product.name] == undefined) {
+      cart[productName.product.name] = 1;
     }
     // Otherwise, it is already in the cart, so just increment the quantity of
     // the item.
     else {
-      cart[productName]++;
+      cart[productName.product.name]++;
     }
     // Now reduce the overall stock of the item because it is now in someones
     // cart.
     alert("Item added in your cart!");
-    products[productName]--;
+    productName.quantity--;
   }
   // Reset the Timer now that we are done.
   timer.reset();
@@ -116,16 +159,16 @@ function removeFromCart(productName) {
 
   // Only remove the item from the cart, if that item actually exists in the
   // cart already.
-  if (cart[productName] != undefined) {
+  if (cart[productName.product.name] != undefined) {
     // Remove it from the cart.
-    cart[productName]--;
+    cart[productName.product.name]--;
     alert("Item removed from your cart!");
     // Add it to the total stock
-    products[productName]++;
+    productName.quantity++;
     // If the cart now has 0 of that item, then delete it from the cart
     // completely.
-    if (cart[productName] == 0) {
-      delete cart[productName];
+    if (cart[productName.product.name] == 0) {
+      delete cart[productName.product.name];
     }
   }
   // If the item doesn't exist, then give an alert to the user
