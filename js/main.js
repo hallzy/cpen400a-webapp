@@ -84,6 +84,7 @@ var timer;
 
 window.onload = function() {
   // Set the timer to start running
+  updateInactiveTimeFooter();
   timer = new customTimer(inactiveTimeLimit);
   timer.set();
 }
@@ -119,6 +120,7 @@ var customTimer = function(inactiveTimeLimit) {
         alert("Hey there! Are you still planning to buy something?");
         that.reset();
       }
+      updateInactiveTimeFooter();
     }
     this.timer = setInterval(checkInactivity, 1000);
   }
@@ -127,6 +129,7 @@ var customTimer = function(inactiveTimeLimit) {
     clearInterval(this.timer);
     this.set();
     inactiveTime = 0;
+    updateInactiveTimeFooter();
   }
 };
 
@@ -151,7 +154,7 @@ function addToCart(productName) {
     // cart.
     // alert("Item added in your cart!");
     productName.quantity--;
-    updateCartPriceAdded(productName);
+    updateCartPrice();
   }
   // Reset the Timer now that we are done.
   timer.reset();
@@ -181,7 +184,7 @@ function removeFromCart(productName) {
     if (cart.items[productName.product.name] == 0) {
       delete cart.items[productName.product.name];
     }
-    updateCartPriceRemoved(productName);
+    updateCartPrice();
   }
   // If the item doesn't exist, then give an alert to the user
   else {
@@ -217,15 +220,13 @@ function showCart() {
 }
 
 // Finds the current price of the cart, and redoes the button text
-function updateCartPrice(isAdding, productName) {
-  var item = productName.product;
-  if (isAdding) {
-    this.price += item.price;
+function updateCartPrice() {
+  var price = 0;
+  for (var item in cart.items) {
+    price += products[item].product.computeNetPrice(cart.items[item]);
   }
-  else {
-    this.price -= item.price;
-  }
-  updateCartButton(this.price);
+  cart.price = price;
+  updateCartButton(cart.price);
 }
 
 // Just update the text of the show cart button
@@ -235,5 +236,7 @@ function updateCartButton(price) {
   document.getElementById("show_cart").textContent = str;
 }
 
-var updateCartPriceRemoved = updateCartPrice.bind(cart, false);
-var updateCartPriceAdded   = updateCartPrice.bind(cart, true);
+function updateInactiveTimeFooter() {
+  var str = "Inactivity Time: " + inactiveTime;
+  document.getElementById("inactive_time").textContent = str;
+}
