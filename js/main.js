@@ -87,6 +87,8 @@ window.onload = function() {
   updateInactiveTimeFooter();
   timer = new customTimer(inactiveTimeLimit);
   timer.set();
+
+  generateProducts();
 }
 
 // Prototype function for Product objects that computes the price of quantity
@@ -113,6 +115,7 @@ var customTimer = function(inactiveTimeLimit) {
     // checkInactivity Function
     var checkInactivity = function() {
       inactiveTime++;
+      updateInactiveTimeFooter();
       // If inactiveTimeLimit seconds has passed then give an alert and reset
       // the timer and the timer
       if (inactiveTime >= that.inactiveTimeLimit) {
@@ -120,7 +123,6 @@ var customTimer = function(inactiveTimeLimit) {
         alert("Hey there! Are you still planning to buy something?");
         that.reset();
       }
-      updateInactiveTimeFooter();
     }
     this.timer = setInterval(checkInactivity, 1000);
   }
@@ -152,7 +154,7 @@ function addToCart(productName) {
     }
     // Now reduce the overall stock of the item because it is now in someones
     // cart.
-    // alert("Item added in your cart!");
+    alert("Item added in your cart!");
     productName.quantity--;
     updateCartPrice();
   }
@@ -176,7 +178,7 @@ function removeFromCart(productName) {
   if (cart.items[productName.product.name] != undefined) {
     // Remove it from the cart.
     cart.items[productName.product.name]--;
-    // alert("Item removed from your cart!");
+    alert("Item removed from your cart!");
     // Add it to the total stock
     productName.quantity++;
     // If the cart now has 0 of that item, then delete it from the cart
@@ -225,7 +227,8 @@ function updateCartPrice() {
   for (var item in cart.items) {
     price += products[item].product.computeNetPrice(cart.items[item]);
   }
-  cart.price = price;
+  // Prices are fixed to 2 decimal places
+  cart.price = price.toFixed(2);
   updateCartButton(cart.price);
 }
 
@@ -239,4 +242,93 @@ function updateCartButton(price) {
 function updateInactiveTimeFooter() {
   var str = "Inactivity Time: " + inactiveTime;
   document.getElementById("inactive_time").textContent = str;
+}
+
+function generateProducts() {
+  // Iterate through every product that we have and create an html block for it
+  // so that it displays properly on the page.
+  for (item in products) {
+    // we will be using these to generate the html tags
+    var name  = products[item].product.name;
+    var image = products[item].product.imageUrl;
+    var price = products[item].product.price;
+
+    // Make sure we know where the productList starts. Everything will be
+    // appended to this
+    var productList = document.getElementById("productList");
+
+    // Everything appended to this will be part of the specific product that we
+    // are dealing with.
+    var productDiv = document.createElement("div");
+    productDiv.className = "product"
+
+    // A div for the images of the item, including the item image itself, the
+    // cart image, and the buttons
+    var productImage = document.createElement("div");
+    productImage.className = "product_images"
+
+    // This is the actual image of the product, and we assign the image url to
+    // the source of this img tag
+    var productPic = document.createElement("img");
+    productPic.className = "product_pic"
+    productPic.src = image;
+
+    // This is the cart image that appears when hovered.
+    var cartPic = document.createElement("img");
+    cartPic.className = "cart_image"
+    cartPic.src = "images/cart.png"
+
+    // Button to add the item.
+    var addButton = document.createElement("button");
+    addButton.className = "add_button"
+    // On Clicking the button, we are going to run the addToCart() function with
+    // with the current item as an argument, so we know what we are adding.
+    addButton.onclick = function(name) {
+      return function() {
+        addToCart(name)
+      }
+    }(products[name]); // Call the outer function with the name as an arg.
+                       // If we only call the outer argument, this doesn't work
+                       // and only adds the item that appears last in the list.
+    addButton.textContent = "Add"
+
+    // Button to remove the item.
+    var removeButton = document.createElement("button");
+    removeButton.className = "remove_button"
+    // On Clicking the button, we are going to run the removeFromCart()
+    // function with with the current item as an argument, so we know what we
+    // are removing.
+    removeButton.onclick = function(name) {
+      return function() {
+        removeFromCart(name)
+      }
+    }(products[name]);
+    removeButton.textContent = "Remove"
+
+    // Displays the name of the item
+    var productTitle = document.createElement("p");
+    productTitle.className = "title"
+    productTitle.textContent = name
+
+    // Displays the dollar value
+    var productPrice = document.createElement("p");
+    productPrice.className = "price"
+    // .toFixed(2) says to always show 2 decimal places.
+    productPrice.textContent = "$" + price.toFixed(2)
+
+    // Add the images and buttons to the productImage Div
+    productImage.appendChild(productPic);
+    productImage.appendChild(cartPic);
+    productImage.appendChild(addButton);
+    productImage.appendChild(removeButton);
+
+    // Now we need to add the productImage div, along with the item name and
+    // price to the productDiv
+    productDiv.appendChild(productImage);
+    productDiv.appendChild(productTitle);
+    productDiv.appendChild(productPrice);
+
+    // Finally, add the productDiv to our list of products
+    productList.appendChild(productDiv);
+  }
 }
