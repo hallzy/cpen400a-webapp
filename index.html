@@ -30,22 +30,24 @@
       </ul>
     </div>
     <div id="productList">
-      <!-- generateProducts() fills in this space programmatically using the -->
-      <!-- example syntax below -->
-      <!-- <div class="product"> -->
-      <!--   <div class="product_images"> -->
-      <!--     <img class="product_pic" src="path or url to product image"> -->
-      <!--     <img class="cart_image" src="images/cart.png"> -->
-      <!--     <button class="add_button" onclick="addToCart(products.product name)"> -->
-      <!--       Add -->
-      <!--     </button> -->
-      <!--     <button class="remove_button" onclick="removeFromCart(products.product name)"> -->
-      <!--       Remove -->
-      <!--     </button> -->
-      <!--   </div> -->
-      <!--   <p class="title">product name</p> -->
-      <!--   <p class="price">product price</p> -->
-      <!-- </div> -->
+      <!-- We will use this template in the JS code and duplicate it for -->
+      <!-- every product on our website -->
+      <template id="productTemplate">
+        <div class="product">
+          <div class="product_images">
+            <img class="product_pic" src="path or url to product image">
+            <img class="cart_image" src="images/cart.png">
+            <button class="add_button">
+              Add
+            </button>
+            <button class="remove_button">
+              Remove
+            </button>
+          </div>
+          <p class="title">product name</p>
+          <p class="price">product price</p>
+        </div>
+      </template>
     </div>
   </div>
 </body>

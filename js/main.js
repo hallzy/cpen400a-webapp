@@ -253,82 +253,141 @@ function generateProducts() {
     var image = products[item].product.imageUrl;
     var price = products[item].product.price;
 
-    // Make sure we know where the productList starts. Everything will be
-    // appended to this
-    var productList = document.getElementById("productList");
-
-    // Everything appended to this will be part of the specific product that we
-    // are dealing with.
-    var productDiv = document.createElement("div");
-    productDiv.className = "product"
-
-    // A div for the images of the item, including the item image itself, the
-    // cart image, and the buttons
-    var productImage = document.createElement("div");
-    productImage.className = "product_images"
-
-    // This is the actual image of the product, and we assign the image url to
-    // the source of this img tag
-    var productPic = document.createElement("img");
-    productPic.className = "product_pic"
-    productPic.src = image;
-
-    // This is the cart image that appears when hovered.
-    var cartPic = document.createElement("img");
-    cartPic.className = "cart_image"
-    cartPic.src = "images/cart.png"
-
-    // Button to add the item.
-    var addButton = document.createElement("button");
-    addButton.className = "add_button"
-    // On Clicking the button, we are going to run the addToCart() function with
-    // with the current item as an argument, so we know what we are adding.
-    addButton.onclick = function(name) {
-      return function() {
-        addToCart(name)
-      }
-    }(products[name]); // Call the outer function with the name as an arg.
-                       // If we only call the outer argument, this doesn't work
-                       // and only adds the item that appears last in the list.
-    addButton.textContent = "Add"
-
-    // Button to remove the item.
-    var removeButton = document.createElement("button");
-    removeButton.className = "remove_button"
-    // On Clicking the button, we are going to run the removeFromCart()
-    // function with with the current item as an argument, so we know what we
-    // are removing.
-    removeButton.onclick = function(name) {
-      return function() {
-        removeFromCart(name)
-      }
-    }(products[name]);
-    removeButton.textContent = "Remove"
-
-    // Displays the name of the item
-    var productTitle = document.createElement("p");
-    productTitle.className = "title"
-    productTitle.textContent = name
-
-    // Displays the dollar value
-    var productPrice = document.createElement("p");
-    productPrice.className = "price"
-    // .toFixed(2) says to always show 2 decimal places.
-    productPrice.textContent = "$" + price.toFixed(2)
-
-    // Add the images and buttons to the productImage Div
-    productImage.appendChild(productPic);
-    productImage.appendChild(cartPic);
-    productImage.appendChild(addButton);
-    productImage.appendChild(removeButton);
-
-    // Now we need to add the productImage div, along with the item name and
-    // price to the productDiv
-    productDiv.appendChild(productImage);
-    productDiv.appendChild(productTitle);
-    productDiv.appendChild(productPrice);
-
-    // Finally, add the productDiv to our list of products
-    productList.appendChild(productDiv);
+    // If templates work, use them... Otherwise, resort to the old lengthy
+    // method in the else statement
+    if ('content' in document.createElement('template')) {
+      useTemplates(name, image, price);
+    }
+    else {
+      createAndAppend(name, image, price);
+    }
   }
+}
+
+// Create the products blocks in HTML using the template that exists in the html
+// file already.
+function useTemplates(name, image, price) {
+  // Get the content of the template (ie, the actual stuff that has been
+  // templated)
+  var content = document.querySelector('#productTemplate').content;
+
+  // Find an element in the template, and set attributes that need to change.
+  // For example, the item image, item name, item price
+  content.querySelector('.product_pic').src = image;
+  content.querySelector('.title').textContent = name;
+  content.querySelector('.price').textContent = "$" + price.toFixed(2);
+
+  // Setup a special id for each button that contains the name of the item that
+  // we are adding or removing. I will use this special id as reference for the
+  // onclick event
+  content.querySelector('.add_button').id = "add_" + name + "_id"
+  content.querySelector('.remove_button').id = "remove_" + name + "_id"
+
+  // Duplicate the contents of the template and append it to the productList
+  document.querySelector('#productList').appendChild( document.importNode(
+    content, true));
+
+  // On Clicking the button, we are going to run the addToCart() function with
+  // with the current item as an argument, so we know what we are adding.
+  var addButton = document.getElementById("add_" + name + "_id");
+  // NOTE: the closure is essential for this to work correctly.
+  // I need to execute the outer function with the product name as an argument
+  // so I can pass it to the function, but I don't want to add anything yet.
+  addButton.onclick = function(name) {
+    return function() {
+      addToCart(name)
+    }
+  }(products[name]);
+
+  // On Clicking the button, we are going to run the addToCart() function with
+  // with the current item as an argument, so we know what we are adding.
+  var removeButton = document.getElementById("remove_" + name + "_id");
+  removeButton.onclick = function(name) {
+    return function() {
+      removeFromCart(name)
+    }
+  }(products[name]);
+}
+
+// Use the createElement, and appendChild commands to dynamically create the
+// product blocks. This is more lengthy and confusing than the more superior
+// templates function above, but I am keeping it here for compatibility reasons
+function createAndAppend(name, image, price) {
+  // Make sure we know where the productList starts. Everything will be
+  // appended to this
+  var productList = document.getElementById("productList");
+
+  // Everything appended to this will be part of the specific product that we
+  // are dealing with.
+  var productDiv = document.createElement("div");
+  productDiv.className = "product"
+
+  // A div for the images of the item, including the item image itself, the
+  // cart image, and the buttons
+  var productImage = document.createElement("div");
+  productImage.className = "product_images"
+
+  // This is the actual image of the product, and we assign the image url to
+  // the source of this img tag
+  var productPic = document.createElement("img");
+  productPic.className = "product_pic"
+  productPic.src = image;
+
+  // This is the cart image that appears when hovered.
+  var cartPic = document.createElement("img");
+  cartPic.className = "cart_image"
+  cartPic.src = "images/cart.png"
+
+  // Button to add the item.
+  var addButton = document.createElement("button");
+  addButton.className = "add_button"
+  // On Clicking the button, we are going to run the addToCart() function with
+  // with the current item as an argument, so we know what we are adding.
+  addButton.onclick = function(name) {
+    return function() {
+      addToCart(name)
+    }
+  }(products[name]); // Call the outer function with the name as an arg.
+  // If we only call the outer argument, this doesn't work
+  // and only adds the item that appears last in the list.
+  addButton.textContent = "Add"
+
+  // Button to remove the item.
+  var removeButton = document.createElement("button");
+  removeButton.className = "remove_button"
+  // On Clicking the button, we are going to run the removeFromCart()
+  // function with with the current item as an argument, so we know what we
+  // are removing.
+  removeButton.onclick = function(name) {
+    return function() {
+      removeFromCart(name)
+    }
+  }(products[name]);
+  removeButton.textContent = "Remove"
+
+  // Displays the name of the item
+  var productTitle = document.createElement("p");
+  productTitle.className = "title"
+  productTitle.textContent = name
+
+  // Displays the dollar value
+  var productPrice = document.createElement("p");
+  productPrice.className = "price"
+  // .toFixed(2) says to always show 2 decimal places.
+  productPrice.textContent = "$" + price.toFixed(2)
+
+  // Add the images and buttons to the productImage Div
+  productImage.appendChild(productPic);
+  productImage.appendChild(cartPic);
+  productImage.appendChild(addButton);
+  productImage.appendChild(removeButton);
+
+  // Now we need to add the productImage div, along with the item name and
+  // price to the productDiv
+  productDiv.appendChild(productImage);
+  productDiv.appendChild(productTitle);
+  productDiv.appendChild(productPrice);
+
+  // Finally, add the productDiv to our list of products
+  productList.appendChild(productDiv);
 }
