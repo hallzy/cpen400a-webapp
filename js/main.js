@@ -245,22 +245,21 @@ function updateInactiveTimeFooter() {
 }
 
 function generateProducts() {
-  // Iterate through every product that we have and create an html block for it
-  // so that it displays properly on the page.
-  for (item in products) {
-    // we will be using these to generate the html tags
-    var name  = products[item].product.name;
-    var image = products[item].product.imageUrl;
-    var price = products[item].product.price;
+  // If templates work, use them... Otherwise, display an alert
+  if ('content' in document.createElement('template')) {
+    // Iterate through every product that we have and create an html block for
+    // it so that it displays properly on the page.
+    for (item in products) {
+      // we will be using these to generate the html tags
+      var name  = products[item].product.name;
+      var image = products[item].product.imageUrl;
+      var price = products[item].product.price;
 
-    // If templates work, use them... Otherwise, resort to the old lengthy
-    // method in the else statement
-    if ('content' in document.createElement('template')) {
       useTemplates(name, image, price);
     }
-    else {
-      createAndAppend(name, image, price);
-    }
+  }
+  else {
+    alert("Your browser does not appear to support <template> tags");
   }
 }
 
@@ -307,87 +306,4 @@ function useTemplates(name, image, price) {
       removeFromCart(name)
     }
   }(products[name]);
-}
-
-// Use the createElement, and appendChild commands to dynamically create the
-// product blocks. This is more lengthy and confusing than the more superior
-// templates function above, but I am keeping it here for compatibility reasons
-function createAndAppend(name, image, price) {
-  // Make sure we know where the productList starts. Everything will be
-  // appended to this
-  var productList = document.getElementById("productList");
-
-  // Everything appended to this will be part of the specific product that we
-  // are dealing with.
-  var productDiv = document.createElement("div");
-  productDiv.className = "product"
-
-  // A div for the images of the item, including the item image itself, the
-  // cart image, and the buttons
-  var productImage = document.createElement("div");
-  productImage.className = "product_images"
-
-  // This is the actual image of the product, and we assign the image url to
-  // the source of this img tag
-  var productPic = document.createElement("img");
-  productPic.className = "product_pic"
-  productPic.src = image;
-
-  // This is the cart image that appears when hovered.
-  var cartPic = document.createElement("img");
-  cartPic.className = "cart_image"
-  cartPic.src = "images/cart.png"
-
-  // Button to add the item.
-  var addButton = document.createElement("button");
-  addButton.className = "add_button"
-  // On Clicking the button, we are going to run the addToCart() function with
-  // with the current item as an argument, so we know what we are adding.
-  addButton.onclick = function(name) {
-    return function() {
-      addToCart(name)
-    }
-  }(products[name]); // Call the outer function with the name as an arg.
-  // If we only call the outer argument, this doesn't work
-  // and only adds the item that appears last in the list.
-  addButton.textContent = "Add"
-
-  // Button to remove the item.
-  var removeButton = document.createElement("button");
-  removeButton.className = "remove_button"
-  // On Clicking the button, we are going to run the removeFromCart()
-  // function with with the current item as an argument, so we know what we
-  // are removing.
-  removeButton.onclick = function(name) {
-    return function() {
-      removeFromCart(name)
-    }
-  }(products[name]);
-  removeButton.textContent = "Remove"
-
-  // Displays the name of the item
-  var productTitle = document.createElement("p");
-  productTitle.className = "title"
-  productTitle.textContent = name
-
-  // Displays the dollar value
-  var productPrice = document.createElement("p");
-  productPrice.className = "price"
-  // .toFixed(2) says to always show 2 decimal places.
-  productPrice.textContent = "$" + price.toFixed(2)
-
-  // Add the images and buttons to the productImage Div
-  productImage.appendChild(productPic);
-  productImage.appendChild(cartPic);
-  productImage.appendChild(addButton);
-  productImage.appendChild(removeButton);
-
-  // Now we need to add the productImage div, along with the item name and
-  // price to the productDiv
-  productDiv.appendChild(productImage);
-  productDiv.appendChild(productTitle);
-  productDiv.appendChild(productPrice);
-
-  // Finally, add the productDiv to our list of products
-  productList.appendChild(productDiv);
 }
