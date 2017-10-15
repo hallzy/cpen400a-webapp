@@ -318,9 +318,11 @@ The background for the price will be a grey with 0.75 opacity
   position: relative;
   background-color: var(--ubc-white);
   margin: auto;
-  top: 40%;
+  top: 50%;
+  transform: translateY(-50%); /* Helps keep modal centred */
+  bottom: auto;
   padding: 0px;
-  width: 60%
+  width: 1000px;
 
 }
 
@@ -336,4 +338,54 @@ The background for the price will be a grey with 0.75 opacity
   color: var(--ubc-blue);
   text-decoration: none;
   cursor: pointer;
+}
+
+#cart_items {
+  width: 100%;
+  margin: auto;
+}
+
+#cart_items td {
+  text-align: center;
+  width: 1%;
+}
+
+#cart-total {
+  font-weight: bold;
+}
+
+#subtotal {
+  font-weight: bold;
+}
+
+/* Don't ever show the buttons for the subtotal line */
+#subtotal .inc_button,
+#subtotal .dec_button {
+  visibility: hidden;
+}
+
+.cart-inc-dec button {
+  width: 30px;
+  height: 30px;
+  color: var(--ubc-white);
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.inc_button {
+  background: green;
+  border: 2px solid white;
+}
+
+.inc_button:hover {
+  border: 2px solid green;
+}
+
+.dec_button {
+  background: red;
+  border: 2px solid white;
+}
+
+.dec_button:hover {
+  border: 2px solid red;
 }

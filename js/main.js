@@ -10,6 +10,15 @@ var Cart = function() {
   this.price = 0;
   this.items = [];
 }
+
+// Get the total amount of items that are in the cart altogether
+Cart.prototype.getTotalQuantity = function() {
+  total = 0;
+  for (var item in this.items) {
+    total += cart.items[item];
+  }
+  return total;
+}
 var cart = new Cart();
 
 var Product = function(name, price, imageUrl) {
@@ -90,34 +99,7 @@ window.onload = function() {
 
   generateProducts();
 
-
-
-
-
-  var modal = document.getElementById('cartModal');
-  var btn = document.getElementById("show_cart");
-  var span = document.getElementsByClassName("close")[0];
-
-  btn.onclick = function() {
-    modal.style.display = "block";
-  }
-
-  span.onclick = function() {
-    modal.style.display = "none";
-  }
-
-  window.onclick = function(event) {
-    if (event.target == modal) {
-      modal.style.display = "none";
-    }
-  }
-
-  document.onkeydown = function(key) {
-    // 27 is the key for the escape button
-    if (key.keyCode == 27) {
-      modal.style.display = "none";
-    }
-  }
+  setupCartModal();
 }
 
 // Prototype function for Product objects that computes the price of quantity
@@ -169,6 +151,9 @@ function addToCart(productName) {
   // Clear the timeout because the user has made an action.
   clearInterval(timer);
 
+  // Reset the Modal so that all the items are removed from the show cart view
+  // and then do our add action
+  resetCartUsingTemplates();
   // Only add the item if we have stock left
   if (productName.quantity > 0) {
     // If the item is not already in the cart, then add it and set the quantity
@@ -183,7 +168,6 @@ function addToCart(productName) {
     }
     // Now reduce the overall stock of the item because it is now in someones
     // cart.
-    alert("Item added in your cart!");
     productName.quantity--;
     updateCartPrice();
   }
@@ -195,6 +179,8 @@ function addToCart(productName) {
     console.log(cart)
     console.log(products)
   }
+  // Now populate our Modal
+  populateCartModal();
 }
 
 // Remove item from the cart
@@ -202,12 +188,14 @@ function removeFromCart(productName) {
   // Clear the timeout because the user has made an action.
   clearInterval(timer);
 
+  // Reset the Modal so that all the items are removed from the show cart view
+  // and then do our remove action
+  resetCartUsingTemplates();
   // Only remove the item from the cart, if that item actually exists in the
   // cart already.
   if (cart.items[productName.product.name] != undefined) {
     // Remove it from the cart.
     cart.items[productName.product.name]--;
-    alert("Item removed from your cart!");
     // Add it to the total stock
     productName.quantity++;
     // If the cart now has 0 of that item, then delete it from the cart
@@ -229,6 +217,8 @@ function removeFromCart(productName) {
     console.log(cart)
     console.log(products)
   }
+  // Now populate our Modal
+  populateCartModal();
 }
 
 // Show the contents of the cart
@@ -284,7 +274,7 @@ function generateProducts() {
       var image = products[item].product.imageUrl;
       var price = products[item].product.price;
 
-      useTemplates(name, image, price);
+      generateProductsUsingTemplates(name, image, price);
     }
   }
   else {
@@ -294,7 +284,7 @@ function generateProducts() {
 
 // Create the products blocks in HTML using the template that exists in the html
 // file already.
-function useTemplates(name, image, price) {
+function generateProductsUsingTemplates(name, image, price) {
   // Get the content of the template (ie, the actual stuff that has been
   // templated)
   var content = document.querySelector('#productTemplate').content;
@@ -335,4 +325,141 @@ function useTemplates(name, image, price) {
       removeFromCart(name)
     }
   }(products[name]);
+}
+
+function setupCartModal() {
+  var modal = document.getElementById('cartModal');
+  var btn = document.getElementById("show_cart");
+  var span = document.getElementsByClassName("close")[0];
+
+  // If the show cart button is pressed, then populate the modal and display it
+  btn.onclick = function() {
+    modal.style.display = "block";
+  }
+
+  // If the X button is pressed, then unpopulate the cart modal and hide it.
+  span.onclick = function() {
+    modal.style.display = "none";
+  }
+
+  // If any part of the page outside of the modal is clicked, then unpopulate
+  // the cart modal and hide it.
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+
+  // If the escape key is pressed, then unpopulate the cart modal and hide it.
+  document.onkeydown = function(key) {
+    // 27 is the key for the escape button
+    if (key.keyCode == 27) {
+      modal.style.display = "none";
+    }
+  }
+}
+
+function populateCartModal() {
+  // If templates work, use them... Otherwise, display an alert
+  if ('content' in document.createElement('template')) {
+    // Iterate through every product that we have in the cart and create an html
+    // block for them so relevant info is available in the cart.
+    for (item in cart.items) {
+      // we will be using these to generate the html tags
+      var name  = products[item].product.name;
+      var quantity = cart.items[item];
+      var unit_price = products[item].product.price;
+
+      populateCartUsingTemplates(name, quantity, unit_price);
+    }
+    // After iterating through all of the products in the cart, add in the last
+    // line which is the subtotal.
+    var content = document.querySelector('#cartTemplate').content;
+    content.querySelector('.temp').id = "subtotal";
+    content.querySelector('.cart-item-title').textContent = "";
+    // content.querySelector('.cart-inc-dec').textContent = "";
+    content.querySelector('.cart-item-quantity').textContent = "";
+    content.querySelector('.cart-item-unit-price').textContent = "Sub Total:";
+    content.querySelector('.cart-item-total-price').textContent = "$" +
+      cart.price;
+    document.querySelector('#cart_items').appendChild( document.importNode(
+      content, true));
+  }
+  else {
+    alert("Your browser does not appear to support <template> tags");
+  }
+}
+
+// Create blocks of HTML for the cart modal using the template that exists in
+// the html file already.
+function populateCartUsingTemplates(name, quantity, unit_price) {
+  // Get the content of the template (ie, the actual stuff that has been
+  // templated)
+  var content = document.querySelector('#cartTemplate').content;
+
+  // Find an element in the template, and set attributes that need to change.
+  content.querySelector('.temp').id = name + "_row";
+  content.querySelector('.cart-item-title').textContent = name;
+  content.querySelector('.cart-item-quantity').textContent = quantity;
+  content.querySelector('.cart-item-unit-price').textContent = "$" +
+    unit_price.toFixed(2);
+  var price = products[item].product.computeNetPrice(cart.items[item]);
+  content.querySelector('.cart-item-total-price').textContent = "$" +
+    price.toFixed(2);
+
+  // Setup a special id for each button that contains the name of the item that
+  // we are incrementing or decrementing. I will use this special id as
+  // reference for the onclick event
+  content.querySelector('.inc_button').id = "inc_" + name + "_id"
+  content.querySelector('.dec_button').id = "dec_" + name + "_id"
+
+  // Duplicate the contents of the template and append it to the productList
+  document.querySelector('#cart_items').appendChild( document.importNode(
+    content, true));
+
+  // On Clicking the button, we are going to run the addToCart() function with
+  // with the current item as an argument, so we know what we are adding.
+  var incButton = document.getElementById("inc_" + name + "_id");
+  // NOTE: the closure is essential for this to work correctly.
+  // I need to execute the outer function with the product name as an argument
+  // so I can pass it to the function, but I don't want to add anything yet.
+  incButton.onclick = function(name) {
+    return function() {
+      addToCart(name)
+      setupCartModal();
+    }
+  }(products[name]);
+
+  // On Clicking the button, we are going to run the addToCart() function with
+  // with the current item as an argument, so we know what we are adding.
+  var decButton = document.getElementById("dec_" + name + "_id");
+  decButton.onclick = function(name) {
+    return function() {
+      removeFromCart(name)
+      setupCartModal();
+    }
+  }(products[name]);
+}
+
+function resetCartUsingTemplates() {
+  // Remove the specified element.
+  Element.prototype.remove = function() {
+    this.parentElement.removeChild(this);
+  }
+
+  for (item in cart.items) {
+    // we will be using these to generate the html tags
+    var name  = products[item].product.name;
+    // Find an element in the template, and set attributes that need to change.
+    // Try it, but if it doesn' work, I don't care, because the item doesn't
+    // exist anymore anyways.
+    try {
+      document.getElementById(name + '_row').remove();
+    } catch (e) { }
+  }
+  // Try it, but if it doesn' work, I don't care, because the item doesn't
+  // exist anymore anyways.
+  try {
+    document.getElementById("subtotal").remove();
+  } catch (e) { }
 }

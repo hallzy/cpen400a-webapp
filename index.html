@@ -26,7 +26,34 @@
           <h2>Cart</h2>
         </div>
         <div class="modal-body">
-          <p>Testing</p>
+          <table id="cart_items">
+            <tr>
+              <th>Description</th>
+              <th></th>
+              <th>Quantity</th>
+              <th>Unit</th>
+              <th>Total</th>
+            </tr>
+            <template id="cartTemplate">
+              <tr class="temp">
+                <td class="cart-item-title"></td>
+                <td class="cart-inc-dec">
+                  <button class="inc_button">+</button>
+                  <button class="dec_button">-</button>
+                </td>
+                <td class="cart-item-quantity">
+                </td>
+                <td class="cart-item-unit-price"></td>
+                <td class="cart-item-total-price"></td>
+              </tr>
+            </template>
+            <!-- <tr> -->
+            <!--   <td></td> -->
+            <!--   <td></td> -->
+            <!--   <td><strong>Sub Total:</strong></td> -->
+            <!--   <td id="cart-total">0</td> -->
+            <!-- </tr> -->
+          </table>
         </div>
         <div class="modal-footer">
           <p>Checkout</p>
