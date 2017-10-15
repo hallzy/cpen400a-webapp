@@ -147,7 +147,7 @@ var customTimer = function(inactiveTimeLimit) {
 };
 
 // Add the item to the users cart.
-function addToCart(productName) {
+function addToCart(product) {
   // Clear the timeout because the user has made an action.
   clearInterval(timer);
 
@@ -155,20 +155,20 @@ function addToCart(productName) {
   // and then do our add action
   resetCartUsingTemplates();
   // Only add the item if we have stock left
-  if (productName.quantity > 0) {
+  if (product.quantity > 0) {
     // If the item is not already in the cart, then add it and set the quantity
     // to 1
-    if (cart.items[productName.product.name] == undefined) {
-      cart.items[productName.product.name] = 1;
+    if (cart.items[product.product.name] == undefined) {
+      cart.items[product.product.name] = 1;
     }
     // Otherwise, it is already in the cart, so just increment the quantity of
     // the item.
     else {
-      cart.items[productName.product.name]++;
+      cart.items[product.product.name]++;
     }
     // Now reduce the overall stock of the item because it is now in someones
     // cart.
-    productName.quantity--;
+    product.quantity--;
     updateCartPrice();
   }
   // Reset the Timer now that we are done.
@@ -184,7 +184,7 @@ function addToCart(productName) {
 }
 
 // Remove item from the cart
-function removeFromCart(productName) {
+function removeFromCart(product) {
   // Clear the timeout because the user has made an action.
   clearInterval(timer);
 
@@ -193,15 +193,15 @@ function removeFromCart(productName) {
   resetCartUsingTemplates();
   // Only remove the item from the cart, if that item actually exists in the
   // cart already.
-  if (cart.items[productName.product.name] != undefined) {
+  if (cart.items[product.product.name] != undefined) {
     // Remove it from the cart.
-    cart.items[productName.product.name]--;
+    cart.items[product.product.name]--;
     // Add it to the total stock
-    productName.quantity++;
+    product.quantity++;
     // If the cart now has 0 of that item, then delete it from the cart
     // completely.
-    if (cart.items[productName.product.name] == 0) {
-      delete cart.items[productName.product.name];
+    if (cart.items[product.product.name] == 0) {
+      delete cart.items[product.product.name];
     }
     updateCartPrice();
   }
