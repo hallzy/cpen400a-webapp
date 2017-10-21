@@ -91,14 +91,17 @@ var timer;
 // ***   Function Declarations
 // *****************************************************************************
 
+// Do this once the window loads
 window.onload = function() {
   // Set the timer to start running
   updateInactiveTimeFooter();
   timer = new customTimer(inactiveTimeLimit);
   timer.set();
 
+  // Dynamically generate the list of products on the page
   generateProducts();
 
+  // Dynamically generate the cart modal and get it read to use.
   setupCartModal();
 }
 
@@ -108,6 +111,7 @@ Product.prototype.computeNetPrice = function(quantity) {
   return this.price * quantity;
 }
 
+// Get the numeric index of the input product
 function products_getIndexOf(product) {
   var productName = product.product.name;
   var keys = Object.keys(products);
@@ -130,6 +134,7 @@ var customTimer = function(inactiveTimeLimit) {
     this.inactiveTimeLimit = inactiveTimeLimit;
   }
 
+  // Set and start the timer
   this.set = function() {
     var that = this;
     // Set an interval timer for 1 second intervals. Every 1 second, call the
@@ -279,6 +284,7 @@ function updateInactiveTimeFooter() {
   document.getElementById("inactive_time").textContent = str;
 }
 
+// Generate the HTML to display the products on the webpage
 function generateProducts() {
   // If templates work, use them... Otherwise, display an alert
   if ('content' in document.createElement('template')) {
@@ -346,6 +352,7 @@ function generateProductsUsingTemplates(name, image, price) {
   updateAddRemoveButtons(products[name]);
 }
 
+// Setup the cart modal and get it ready to be used.
 function setupCartModal() {
   var modal = document.getElementById('cartModal');
   var btn = document.getElementById("show_cart");
@@ -378,6 +385,7 @@ function setupCartModal() {
   }
 }
 
+// Look at the cart, and use it to populate the cart Modal
 function populateCartModal() {
   // If templates work, use them... Otherwise, display an alert
   if ('content' in document.createElement('template')) {
@@ -396,7 +404,6 @@ function populateCartModal() {
     var content = document.querySelector('#cartTemplate').content;
     content.querySelector('.temp').id = "subtotal";
     content.querySelector('.cart-item-title').textContent = "";
-    // content.querySelector('.cart-inc-dec').textContent = "";
     content.querySelector('.cart-item-quantity').textContent = "";
     content.querySelector('.cart-item-unit-price').textContent = "Sub Total:";
     content.querySelector('.cart-item-total-price').textContent = "$" +
@@ -460,12 +467,15 @@ function populateCartUsingTemplates(name, quantity, unit_price) {
   }(products[name]);
 }
 
+// Remove all items from the Modal. We will do this everytime the state of the
+// cart changes so that we can redraw the contents of the modal.
 function resetCartUsingTemplates() {
   // Remove the specified element.
   Element.prototype.remove = function() {
     this.parentElement.removeChild(this);
   }
 
+  // Go through all the items in the cart
   for (item in cart.items) {
     // we will be using these to generate the html tags
     var name  = products[item].product.name;
@@ -476,32 +486,39 @@ function resetCartUsingTemplates() {
       document.getElementById(name + '_row').remove();
     } catch (e) { }
   }
-  // Try it, but if it doesn' work, I don't care, because the item doesn't
-  // exist anymore anyways.
+  // Try it to remove the subtotal entry as well, but if it doesn' work, I don't
+  // care, because the item doesn't exist anymore anyways.
   try {
     document.getElementById("subtotal").remove();
   } catch (e) { }
 }
 
-
+// Update the state of the Add and Remove Buttons.
+// Based on the product stock or cart state, the buttons will need to be hidden
+// or moved. That is what this function does.
 function updateAddRemoveButtons(product) {
+  // Gets an array of ALL remove and add buttons
   var removeButtons =  document.getElementsByClassName("remove_button");
   var addButtons =  document.getElementsByClassName("add_button");
 
+  // Get the index of the product we are currently looking at
   var productname_index = products_getIndexOf(product);
 
+  // set the buttons to the specific product that we are looking at
   var removeButton =  removeButtons[productname_index];
   var addButton =  addButtons[productname_index];
 
   // If the cart has more than 0 items, display the remove button
   if (cart.items[product.product.name] > 0) {
     removeButton.style.display = "block";
+    // Move the button off centre to make room for the remove button
     addButton.style.left = "5px";
   }
   // If there are 0 (or less somehow) items in the cart, remove the "remove"
   // button
   else {
     removeButton.style.display = "none";
+    // Move the button to centre
     addButton.style.left = "55px";
   }
 
@@ -509,6 +526,7 @@ function updateAddRemoveButtons(product) {
   // of stock"
   if (product.quantity <= 0) {
     addButton.style.display = "none";
+    // Move the button to centre
     removeButton.style.left = "55px";
 
     // Also, display out of stock
@@ -517,8 +535,8 @@ function updateAddRemoveButtons(product) {
   }
   // otherwise, if we do have stock left, then display the add button
   else {
-    // The item is now addable, so display the "add button"
     addButton.style.display = "block";
+    // Move the button off centre to make room for the remove button
     removeButton.style.left = "105px";
 
     // Also, now we aren't out of stock
