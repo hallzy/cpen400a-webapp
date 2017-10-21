@@ -108,6 +108,16 @@ Product.prototype.computeNetPrice = function(quantity) {
   return this.price * quantity;
 }
 
+function products_getIndexOf(product) {
+  var productName = product.product.name;
+  var keys = Object.keys(products);
+  for (var i = 0; i < keys.length; i++) {
+    if (productName == keys[i]) {
+      return i;
+    }
+  }
+}
+
 // My timer declaration
 var customTimer = function(inactiveTimeLimit) {
   this.timer;
@@ -181,6 +191,9 @@ function addToCart(product) {
   }
   // Now populate our Modal
   populateCartModal();
+
+  // Now figure out what buttons need to be displayed and which don't
+  updateAddRemoveButtons(product);
 }
 
 // Remove item from the cart
@@ -219,6 +232,9 @@ function removeFromCart(product) {
   }
   // Now populate our Modal
   populateCartModal();
+
+  // Now figure out what buttons need to be displayed and which don't
+  updateAddRemoveButtons(product);
 }
 
 // Show the contents of the cart
@@ -325,6 +341,9 @@ function generateProductsUsingTemplates(name, image, price) {
       removeFromCart(name)
     }
   }(products[name]);
+
+  // Now figure out what buttons need to be displayed and which don't
+  updateAddRemoveButtons(products[name]);
 }
 
 function setupCartModal() {
@@ -462,4 +481,48 @@ function resetCartUsingTemplates() {
   try {
     document.getElementById("subtotal").remove();
   } catch (e) { }
+}
+
+
+function updateAddRemoveButtons(product) {
+  var removeButtons =  document.getElementsByClassName("remove_button");
+  var addButtons =  document.getElementsByClassName("add_button");
+
+  var productname_index = products_getIndexOf(product);
+
+  var removeButton =  removeButtons[productname_index];
+  var addButton =  addButtons[productname_index];
+
+  // If the cart has more than 0 items, display the remove button
+  if (cart.items[product.product.name] > 0) {
+    removeButton.style.display = "block";
+    addButton.style.left = "5px";
+  }
+  // If there are 0 (or less somehow) items in the cart, remove the "remove"
+  // button
+  else {
+    removeButton.style.display = "none";
+    addButton.style.left = "55px";
+  }
+
+  // If there are no products left, then remove the add button, and display "out
+  // of stock"
+  if (product.quantity <= 0) {
+    addButton.style.display = "none";
+    removeButton.style.left = "55px";
+
+    // Also, display out of stock
+    var outOfStock =  document.getElementsByClassName("out-of-stock");
+    outOfStock[productname_index].style.visibility = "visible";
+  }
+  // otherwise, if we do have stock left, then display the add button
+  else {
+    // The item is now addable, so display the "add button"
+    addButton.style.display = "block";
+    removeButton.style.left = "105px";
+
+    // Also, now we aren't out of stock
+    var outOfStock =  document.getElementsByClassName("out-of-stock");
+    outOfStock[productname_index].style.visibility = "hidden";
+  }
 }

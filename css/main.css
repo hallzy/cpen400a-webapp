@@ -55,7 +55,7 @@ body {
 
 .product {
   margin: 16px;
-  padding: 20px;
+  padding: 20px 20px 47px 20px;
   float: left;
   text-align: center;
   background-color: var(--ubc-secondary-blue-5);
@@ -135,7 +135,7 @@ body {
 
 .add_button {
   background: green;
-  left: 5px;
+  left: 55px;
   border: 2px solid green;
 }
 
@@ -144,6 +144,7 @@ body {
 }
 
 .remove_button {
+  display: none;
   background: red;
   left: 105px;
   border: 2px solid red;
@@ -388,4 +389,14 @@ The background for the price will be a grey with 0.75 opacity
 
 .dec_button:hover {
   border: 2px solid red;
+}
+
+.out-of-stock {
+  visibility: hidden;
+  position: relative;
+  margin-top: -70px;
+  background: rgba(169, 169, 169, 0.75);
+  color: black;
+  font-weight: bold;
+  font-size: 20px;
 }
