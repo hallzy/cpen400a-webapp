@@ -358,29 +358,50 @@ function setupCartModal() {
   var btn = document.getElementById("show_cart");
   var span = document.getElementsByClassName("close")[0];
 
-  // If the show cart button is pressed, then populate the modal and display it
-  btn.onclick = function() {
-    modal.style.display = "block";
-  }
+  // Start with the modal as hidden
+  modal.style.display = "none";
 
-  // If the X button is pressed, then unpopulate the cart modal and hide it.
-  span.onclick = function() {
-    modal.style.display = "none";
-  }
-
-  // If any part of the page outside of the modal is clicked, then unpopulate
-  // the cart modal and hide it.
-  window.onclick = function(event) {
-    if (event.target == modal) {
+  // Closures to hide and show the modal, while also resetting the timer.
+  function hideModal() {
+    // Only hide if the modal is actually showing right now.
+    if (modal.style.display == "block") {
       modal.style.display = "none";
+      // Reset the Timer now that we are done.
+      timer.reset();
+    }
+  }
+  function showModal() {
+    // Only show if the modal is actually hidden right now.
+    if (modal.style.display == "none") {
+      modal.style.display = "block";
+      // Reset the Timer now that we are done.
+      timer.reset();
     }
   }
 
-  // If the escape key is pressed, then unpopulate the cart modal and hide it.
+  // If the show cart button is pressed, then display the modal
+  btn.onclick = function() {
+    showModal();
+  }
+
+  // If the X button is pressed, then  hide the modal.
+  span.onclick = function() {
+    hideModal();
+  }
+
+  // If any part of the page outside of the modal is clicked, then  hide the
+  // modal.
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      hideModal();
+    }
+  }
+
+  // If the escape key is pressed, then hide the modal.
   document.onkeydown = function(key) {
-    // 27 is the key for the escape button
-    if (key.keyCode == 27) {
-      modal.style.display = "none";
+    const ESCAPE_KEYCODE = 27;
+    if (key.keyCode == ESCAPE_KEYCODE) {
+      hideModal();
     }
   }
 }
