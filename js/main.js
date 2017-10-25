@@ -5,6 +5,21 @@
 // Set this to true to get some useful console outputs
 const debug = true;
 
+var inactiveTime = 0;
+
+// Timeout time is 300 seconds
+var inactiveTimeLimit = 300;
+
+// Global Timer variable
+var timer;
+
+// *****************************************************************************
+// ***   Object Declarations
+// *****************************************************************************
+
+// -------------------------------------
+// CART OBJECT
+// -------------------------------------
 // Current user's cart (initially, empty).
 var Cart = function() {
   this.price = 0;
@@ -19,15 +34,26 @@ Cart.prototype.getTotalQuantity = function() {
   }
   return total;
 }
+
+// Create a new Cart object
 var cart = new Cart();
 
+// -------------------------------------
+// PRODUCT OBJECT
+// -------------------------------------
 var Product = function(name, price, imageUrl) {
   this.name     = name;
   this.price    = price;
   this.imageUrl = imageUrl;
 }
 
-// Overall stock of all items
+// Prototype function for Product objects that computes the price of quantity
+// number of that item
+Product.prototype.computeNetPrice = function(quantity) {
+  return this.price * quantity;
+}
+
+// List of Products containing Product objects
 var products = {
   'Box1' : {
     'product'  : new Product('Box1', 10, 'images/products/Box1_$10.png'),
@@ -79,14 +105,6 @@ var products = {
   },
 }
 
-var inactiveTime = 0;
-
-// Timeout time is 300 seconds
-var inactiveTimeLimit = 300;
-
-// Global Timer variable
-var timer;
-
 // *****************************************************************************
 // ***   Function Declarations
 // *****************************************************************************
@@ -101,14 +119,11 @@ window.onload = function() {
   // Dynamically generate the list of products on the page
   generateProducts();
 
+  // Start with the modal as hidden
+  var modal = document.getElementById('cartModal');
+  modal.style.display = "none";
   // Dynamically generate the cart modal and get it read to use.
   setupCartModal();
-}
-
-// Prototype function for Product objects that computes the price of quantity
-// number of that item
-Product.prototype.computeNetPrice = function(quantity) {
-  return this.price * quantity;
 }
 
 // Get the numeric index of the input product
@@ -357,9 +372,6 @@ function setupCartModal() {
   var modal = document.getElementById('cartModal');
   var btn = document.getElementById("show_cart");
   var span = document.getElementsByClassName("close")[0];
-
-  // Start with the modal as hidden
-  modal.style.display = "none";
 
   // Closures to hide and show the modal, while also resetting the timer.
   function hideModal() {
