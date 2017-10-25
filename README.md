@@ -2,6 +2,10 @@
 
 This is our repo for our term long web app project.
 
+* [Assignment-1](https://github.com/juliengs/cpen400a-fall2017-assignment1)
+* [Assignment-2](https://github.com/jungkumseok/cpen400a-fall2017-assignment2)
+* [Assignment-3](https://github.com/jungkumseok/cpen400a-fall2017-assignment3)
+
 ## Git Hooks
 
 ### Pre-Commit Hooks
