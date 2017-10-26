@@ -79,14 +79,10 @@ window.onload = function() {
   // Start off with an Ajax request
   ajaxGet(urlForProducts, ajaxSuccess, ajaxFail);
 
-
   // Set the timer to start running
   updateInactiveTimeFooter();
   timer = new customTimer(inactiveTimeLimit);
   timer.set();
-
-  // Dynamically generate the list of products on the page
-  generateProducts();
 
   // Start with the modal as hidden
   var modal = document.getElementById('cartModal');
@@ -106,16 +102,14 @@ function products_getIndexOf(product) {
   }
 }
 
-var ajaxStatus;
-var ajaxResponse;
+// Submit a ajax request to a given URL
 function ajaxGet(url, successCallback, errorCallback) {
   var ajaxRequest = new XMLHttpRequest();
   ajaxRequest.open('GET', url, true);
   ajaxRequest.responseType = 'json';
   ajaxRequest.onreadystatechange = function() {
-    ajaxStatus = ajaxRequest.status;
-    // var ajaxStatus = ajaxRequest.status;
-    ajaxResponse = ajaxRequest.response;
+    var ajaxStatus = ajaxRequest.status;
+    // if the readyState is 4 that means the operation is done
     if (this.readyState == 4) {
       if (this.status == 200) {
         return successCallback(ajaxRequest.response);
@@ -134,11 +128,12 @@ function ajaxSuccess(response) {
   failed_ajax_attempts = 0;
   console.log("AJAX SUCCESS")
 
-  // Stop the AJAX Timer
+  // Stop the AJAX Timer. We don't need it anymore... for now
   clearInterval(ajax_timer);
 
   console.log(response);
   var iteration = 0;
+  // Iterate through all the response items so that I can add them to products
   for (item in response) {
     iteration++;
     // we will be using these to generate the html tags
@@ -149,9 +144,13 @@ function ajaxSuccess(response) {
     var str = '{"' + name + '":{"product":{"name":"' + name + '","price":' +
               price + ',"imageUrl":"' + image + '"},"quantity":' + quantity +
               '}}'
+    // Use the string created and parse it as JSON, then give it to products
     Object.assign(products, JSON.parse(str));
+    // Make sure that the product portion of the string gets the Product
+    // prototype
     Object.setPrototypeOf(products[name].product, Product.prototype);
   }
+  // Generate the products in the DOM after we get all of the response items
   generateProducts();
   return true;
 }
