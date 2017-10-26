@@ -7,15 +7,24 @@ const debug = true;
 
 var inactiveTime = 0;
 
+const urlForProducts = "https://cpen400a-bookstore.herokuapp.com/products";
+
 // Timeout time is 300 seconds
 var inactiveTimeLimit = 300;
 
 // Global Timer variable
 var timer;
 
+// Ajax Timer
+var ajax_timer;
+
 // *****************************************************************************
 // ***   Object Declarations
 // *****************************************************************************
+// Remove the specified element.
+Element.prototype.remove = function() {
+  this.parentElement.removeChild(this);
+}
 
 // -------------------------------------
 // CART OBJECT
@@ -54,56 +63,7 @@ Product.prototype.computeNetPrice = function(quantity) {
 }
 
 // List of Products containing Product objects
-var products = {
-  'Box1' : {
-    'product'  : new Product('Box1', 10, 'images/products/Box1_$10.png'),
-    'quantity' : 5
-  },
-  'Box2' : {
-    'product'  : new Product('Box2', 5, 'images/products/Box2_$5.png'),
-    'quantity' : 5
-  },
-  'Clothes1' : {
-    'product'  : new Product('Clothes1', 20, 'images/products/Clothes1_$20.png'),
-    'quantity' : 5
-  },
-  'Clothes2' : {
-    'product'  : new Product('Clothes2', 30, 'images/products/Clothes2_$30.png'),
-    'quantity' : 5
-  },
-  'Jeans' : {
-    'product'  : new Product('Jeans', 50, 'images/products/Jeans_$50.png'),
-    'quantity' : 5
-  },
-  'Keyboard' : {
-    'product'  : new Product('Keyboard', 20, 'images/products/Keyboard_$20.png'),
-    'quantity' : 5
-  },
-  'KeyboardCombo' : {
-    'product'  : new Product('KeyboardCombo', 40, 'images/products/KeyboardCombo_$40.png'),
-    'quantity' : 5
-  },
-  'Mice' : {
-    'product'  : new Product('Mice', 20, 'images/products/Mice_$20.png'),
-    'quantity' : 5
-  },
-  'PC1' : {
-    'product'  : new Product('PC1', 350, 'images/products/PC1_$350.png'),
-    'quantity' : 5
-  },
-  'PC2' : {
-    'product'  : new Product('PC2', 400, 'images/products/PC2_$400.png'),
-    'quantity' : 5
-  },
-  'PC3' : {
-    'product'  : new Product('PC3', 300, 'images/products/PC3_$300.png'),
-    'quantity' : 5
-  },
-  'Tent' : {
-    'product'  : new Product('Tent', 100, 'images/products/Tent_$100.png'),
-    'quantity' : 5
-  },
-}
+var products = {}
 
 // *****************************************************************************
 // ***   Function Declarations
@@ -111,6 +71,15 @@ var products = {
 
 // Do this once the window loads
 window.onload = function() {
+  // Set a timer to automatically fire an AJAX request
+  var ajax_wait_sec = 1;
+  ajax_timer = setInterval(ajaxGet, ajax_wait_sec*1000, urlForProducts,
+                           ajaxSuccess, ajaxFail);
+
+  // Start off with an Ajax request
+  ajaxGet(urlForProducts, ajaxSuccess, ajaxFail);
+
+
   // Set the timer to start running
   updateInactiveTimeFooter();
   timer = new customTimer(inactiveTimeLimit);
@@ -135,6 +104,70 @@ function products_getIndexOf(product) {
       return i;
     }
   }
+}
+
+var ajaxStatus;
+var ajaxResponse;
+function ajaxGet(url, successCallback, errorCallback) {
+  var ajaxRequest = new XMLHttpRequest();
+  ajaxRequest.open('GET', url, true);
+  ajaxRequest.responseType = 'json';
+  ajaxRequest.onreadystatechange = function() {
+    ajaxStatus = ajaxRequest.status;
+    // var ajaxStatus = ajaxRequest.status;
+    ajaxResponse = ajaxRequest.response;
+    if (this.readyState == 4) {
+      if (this.status == 200) {
+        return successCallback(ajaxRequest.response);
+      }
+      else {
+        return errorCallback(ajaxRequest.response);
+      }
+    }
+  };
+  ajaxRequest.send();
+  // Set a 0.5 second timeout
+  setTimeout(function() { ajaxRequest.abort() }, 500)
+}
+
+function ajaxSuccess(response) {
+  failed_ajax_attempts = 0;
+  console.log("AJAX SUCCESS")
+
+  // Stop the AJAX Timer
+  clearInterval(ajax_timer);
+
+  console.log(response);
+  var iteration = 0;
+  for (item in response) {
+    iteration++;
+    // we will be using these to generate the html tags
+    var name  = response[item].name;
+    var image = response[item].imageUrl;
+    var price = response[item].price;
+    var quantity = response[item].quantity;
+    var str = '{"' + name + '":{"product":{"name":"' + name + '","price":' +
+              price + ',"imageUrl":"' + image + '"},"quantity":' + quantity +
+              '}}'
+    Object.assign(products, JSON.parse(str));
+    Object.setPrototypeOf(products[name].product, Product.prototype);
+  }
+  generateProducts();
+  return true;
+}
+
+var failed_ajax_attempts = 0;
+function ajaxFail(error) {
+  console.log("AJAX ERROR")
+  console.log(error);
+  failed_ajax_attempts++;
+
+  // If we exceed 10 failed attempts, just kill the ajax request.
+  if (failed_ajax_attempts >= 10) {
+    clearInterval(ajax_timer);
+    alert("Failed to Fetch Products From Server")
+  }
+  return false;
 }
 
 // My timer declaration
@@ -303,6 +336,15 @@ function updateInactiveTimeFooter() {
 function generateProducts() {
   // If templates work, use them... Otherwise, display an alert
   if ('content' in document.createElement('template')) {
+    var domProducts = document.getElementsByClassName('product')
+    // Need to get the size now, because everytime we delete an object, the
+    // indicies get reset as well... For the same reason, we will only be
+    // deleting index 0.
+    var size = domProducts.length
+    for (var i = 0; i < size; i++) {
+      domProducts[0].remove();
+    }
+
     // Iterate through every product that we have and create an html block for
     // it so that it displays properly on the page.
     for (item in products) {
@@ -503,11 +545,6 @@ function populateCartUsingTemplates(name, quantity, unit_price) {
 // Remove all items from the Modal. We will do this everytime the state of the
 // cart changes so that we can redraw the contents of the modal.
 function resetCartUsingTemplates() {
-  // Remove the specified element.
-  Element.prototype.remove = function() {
-    this.parentElement.removeChild(this);
-  }
-
   // Go through all the items in the cart
   for (item in cart.items) {
     // we will be using these to generate the html tags
