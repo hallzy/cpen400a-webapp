@@ -7,7 +7,9 @@ const debug = true;
 
 var inactiveTime = 0;
 
-const urlForProducts = "https://cpen400a-bookstore.herokuapp.com/products";
+// const urlForProducts = "https://cpen400a-bookstore.herokuapp.com/products";
+// const urlForProducts = "https://secret-beyond-19352.herokuapp.com/products";
+const urlForProducts = "https://localhost:5000/products";
 
 // Timeout time is 300 seconds
 var inactiveTimeLimit = 300;
