@@ -1,0 +1,15 @@
+Task 1A		1
+Task 1B		1
+Task 1C		1
+Task 2A		0.5
+Task 2B		0.5
+Task 2C		1.5
+Task 2D		1.5
+Task 3		1
+Task 4		3
+Code Quality		3
+Scalability		2
+Total		16
+
+Comments:
+-
