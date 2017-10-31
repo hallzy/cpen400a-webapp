@@ -299,7 +299,7 @@ The background for the price will be a grey with 0.75 opacity
   color: var(--ubc-white);
 }
 
-.modal-footer p {
+#checkout {
   float: right;
   position: relative;
   top: -10px;

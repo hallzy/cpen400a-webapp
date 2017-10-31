@@ -9,16 +9,13 @@ var inactiveTime = 0;
 
 // const urlForProducts = "https://cpen400a-bookstore.herokuapp.com/products";
 // const urlForProducts = "https://secret-beyond-19352.herokuapp.com/products";
-const urlForProducts = "https://localhost:5000/products";
+const urlForProducts = "http://localhost:5000/products";
 
 // Timeout time is 300 seconds
 var inactiveTimeLimit = 300;
 
 // Global Timer variable
 var timer;
-
-// Ajax Timer
-var ajax_timer;
 
 // *****************************************************************************
 // ***   Object Declarations
@@ -73,12 +70,7 @@ var products = {}
 
 // Do this once the window loads
 window.onload = function() {
-  // Set a timer to automatically fire an AJAX request
-  var ajax_wait_sec = 1;
-  ajax_timer = setInterval(ajaxGet, ajax_wait_sec*1000, urlForProducts,
-                           ajaxSuccess, ajaxFail);
-
-  // Start off with an Ajax request
+  // Make the initial ajax request
   ajaxGet(urlForProducts, ajaxSuccess, ajaxFail);
 
   // Set the timer to start running
@@ -104,6 +96,7 @@ function products_getIndexOf(product) {
   }
 }
 
+var failed_ajax_attempts = 0;
 // Submit a ajax request to a given URL
 function ajaxGet(url, successCallback, errorCallback) {
   var ajaxRequest = new XMLHttpRequest();
@@ -114,24 +107,31 @@ function ajaxGet(url, successCallback, errorCallback) {
     // if the readyState is 4 that means the operation is done
     if (this.readyState == 4) {
       if (this.status == 200) {
-        return successCallback(ajaxRequest.response);
+        successCallback(ajaxRequest.response);
+        failed_ajax_attempts = 0;
       }
       else {
-        return errorCallback(ajaxRequest.response);
+        failed_ajax_attempts++;
+        errorCallback(ajaxRequest.response);
+        // If we exceed 10 failed attempts, just kill the ajax request.
+        if (failed_ajax_attempts >= 10) {
+          alert("Failed to Fetch Products From Server... Retry")
+        }
+        else {
+          // If we still haven't reached the 10 failed attempts, then go again
+          ajaxGet(url, successCallback, errorCallback)
+        }
       }
     }
   };
   ajaxRequest.send();
-  // Set a 0.5 second timeout
-  setTimeout(function() { ajaxRequest.abort() }, 500)
+
+  // Set a request timeout
+  setTimeout(function() { ajaxRequest.abort() }, 300)
 }
 
 function ajaxSuccess(response) {
-  failed_ajax_attempts = 0;
   console.log("AJAX SUCCESS")
-
-  // Stop the AJAX Timer. We don't need it anymore... for now
-  clearInterval(ajax_timer);
 
   console.log(response);
   var iteration = 0;
@@ -157,17 +157,9 @@ function ajaxSuccess(response) {
   return true;
 }
 
-var failed_ajax_attempts = 0;
 function ajaxFail(error) {
   console.log("AJAX ERROR")
   console.log(error);
-  failed_ajax_attempts++;
-
-  // If we exceed 10 failed attempts, just kill the ajax request.
-  if (failed_ajax_attempts >= 10) {
-    clearInterval(ajax_timer);
-    alert("Failed to Fetch Products From Server")
-  }
   return false;
 }
 
@@ -415,6 +407,7 @@ function setupCartModal() {
   var modal = document.getElementById('cartModal');
   var btn = document.getElementById("show_cart");
   var span = document.getElementsByClassName("close")[0];
+  var checkoutBtn = document.getElementById("checkout");
 
   // Closures to hide and show the modal, while also resetting the timer.
   function hideModal() {
@@ -451,6 +444,15 @@ function setupCartModal() {
       hideModal();
     }
   }
+
+  // Checkout button
+  checkoutBtn.onclick = function(name) {
+    return function() {
+      // When we click the checkout button, then perform an AJAX request and if
+      // we succeed, then do the checkout
+      ajaxGet(urlForProducts, doCheckout, ajaxFail);
+    }
+  }();
 
   // If the escape key is pressed, then hide the modal.
   document.onkeydown = function(key) {
@@ -614,4 +616,119 @@ function updateAddRemoveButtons(product) {
     var outOfStock =  document.getElementsByClassName("out-of-stock");
     outOfStock[productname_index].style.visibility = "hidden";
   }
+}
+
+// Do this when the checkout button is pressed
+function doCheckout(response) {
+  // Temporarily save the products list so that I can cross reference to see if
+  // the quantities or prices have changed
+  var tempProducts = JSON.parse(JSON.stringify(products));
+
+  // Do all the normal stuff when successful like update the product lists
+  ajaxSuccess(response);
+
+  // This will check to see if something has changed that we need to tell the
+  // user
+  var somethingChanged = false;
+
+  // Message to send to the user which will be populated here
+  var alertMessage = ""
+
+  // If the prices changed, alert the user for each product in which the price
+  // has changed
+  for (var item in cart.items) {
+    var new_item_price = products[item].product.price;
+    var previous_item_price = tempProducts[item].product.price;
+
+    if (new_item_price > previous_item_price) {
+      somethingChanged = true;
+      alertMessage += "\"" + item + "\" has increased from $" +
+                   previous_item_price.toFixed(2) + " to $" +
+                   new_item_price.toFixed(2) + "\n"
+      console.log("The price for \"" + item + "\" has increased from $" +
+                   previous_item_price.toFixed(2) + " to $" +
+                   new_item_price.toFixed(2))
+    }
+    if (new_item_price < previous_item_price) {
+      somethingChanged = true;
+      alertMessage += "\"" + item + "\" has decreased from $" +
+                   previous_item_price.toFixed(2) + " to $" +
+                  new_item_price.toFixed(2) + "\n"
+      console.log("The price for \"" + item + "\" has decreased from $" +
+                   previous_item_price.toFixed(2) + " to $" +
+                  new_item_price.toFixed(2))
+    }
+    // Update the button visuals
+    updateAddRemoveButtons(products[item])
+  }
+
+  // Place a newline in the alert message so that we can separate the quantity
+  // updates from the price updates
+  alertMessage += "\n"
+
+  // If the quantity is no longer available then change the number of that
+  // product in the cart to the now available quantity and alert the user
+  for (var item in cart.items) {
+    var new_item_quantity = products[item].quantity;
+    var previous_item_quantity = cart.items[item] + tempProducts[item].quantity;
+    var previous_cart_quantity = cart.items[item]
+
+    // The cart will now have either the number of items that was in the cart
+    // previously, or whatever the current total products are. whichever is
+    // lower.
+    cart.items[item] = Math.min(cart.items[item], products[item].quantity)
+
+    // Update the number of total products by taking away what was in the cart.
+    products[item].quantity -= cart.items[item]
+
+    if (new_item_quantity > previous_item_quantity) {
+      console.log("The stock of \"" + item + "\" has increased from " +
+                   previous_item_quantity + " to " +
+                   new_item_quantity)
+    }
+    if (new_item_quantity < previous_item_quantity) {
+      // If I had to reduce the number of of this item in the cart let the user
+      // know
+      if (cart.items[item] < previous_cart_quantity) {
+        somethingChanged = true;
+        alertMessage += "\"" + item + "\" stock has been reduced from " +
+          previous_item_quantity + " to " + new_item_quantity + "\n"
+          cart.items[item]
+      }
+      console.log("The stock of \"" + item + "\" has decreased from " +
+                   previous_item_quantity + " to " +
+                  new_item_quantity)
+    }
+    updateAddRemoveButtons(products[item])
+  }
+
+  // Reset the cart Modal so that it is empty
+  resetCartUsingTemplates();
+
+  // Remove the items that have 0 quantity
+  for (var item in cart.items) {
+    if (cart.items[item] <= 0) {
+      delete cart.items[item]
+    }
+  }
+
+  // Update the cart
+  updateCartPrice()
+  populateCartModal();
+
+  // Create the message if nothing changed
+  if (!somethingChanged) {
+    alertMessage = "Confirming the Total Price and Availability:\n\n\n"
+    alertMessage += "Total is $" + cart.price + "\n\n"
+    for (var item in cart.items) {
+      alertMessage += "\"" + item + "\" has quantity of " +
+                       cart.items[item] + "\n"
+    }
+  }
+  // Make the alerts
+  alert(alertMessage)
+  alert("Total due is $" + cart.price)
+
+  // if we press the checkout button reset the timer
+  timer.reset()
 }
