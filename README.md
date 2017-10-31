@@ -9,7 +9,7 @@ This is our repo for our term long web app project.
 
 ## URL for Heroku App
 
-[heroku](https://secret-beyond-19352.herokuapp.com/products")
+[heroku](https://secret-beyond-19352.herokuapp.com/products)
 
 ## Git Hooks
 
