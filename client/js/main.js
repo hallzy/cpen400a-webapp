@@ -20,6 +20,10 @@ var inactiveTimeLimit = 300;
 // Global Timer variable
 var timer;
 
+// Keep track of the consecutive failed ajax requests so that I know when to
+// give up.
+var consecutive_failed_ajax_requests = 0;
+
 // *****************************************************************************
 // ***   Object Declarations
 // *****************************************************************************
@@ -99,38 +103,37 @@ function products_getIndexOf(product) {
   }
 }
 
-var failed_ajax_attempts = 0;
 // Submit a ajax request to a given URL
 function ajaxGet(url, successCallback, errorCallback) {
   var ajaxRequest = new XMLHttpRequest();
   ajaxRequest.open('GET', url, true);
   ajaxRequest.responseType = 'json';
-  ajaxRequest.onreadystatechange = function() {
+  ajaxRequest.timeout = 300
+  ajaxRequest.onerror = function() {
+    consecutive_failed_ajax_requests++;
+    errorCallback(ajaxRequest.response)
+    // If we exceed 10 failed attempts, just kill the ajax request.
+    if (consecutive_failed_ajax_requests >= 10) {
+      alert("Failed to Fetch Products From Server... Retry")
+    }
+    else {
+      // If we still haven't reached the 10 failed attempts, then go again
+      ajaxGet(url, successCallback, errorCallback)
+    }
+  }
+  ajaxRequest.ontimeout = ajaxRequest.onerror
+  ajaxRequest.onabort = ajaxRequest.onerror
+  ajaxRequest.onload = function() {
     var ajaxStatus = ajaxRequest.status;
     // if the readyState is 4 that means the operation is done
-    if (this.readyState == 4) {
       if (this.status == 200) {
         successCallback(ajaxRequest.response);
-        failed_ajax_attempts = 0;
       }
       else {
-        failed_ajax_attempts++;
-        errorCallback(ajaxRequest.response);
-        // If we exceed 10 failed attempts, just kill the ajax request.
-        if (failed_ajax_attempts >= 10) {
-          alert("Failed to Fetch Products From Server... Retry")
-        }
-        else {
-          // If we still haven't reached the 10 failed attempts, then go again
-          ajaxGet(url, successCallback, errorCallback)
-        }
+        ajaxRequest.onerror()
       }
-    }
   };
   ajaxRequest.send();
-
-  // Set a request timeout
-  setTimeout(function() { ajaxRequest.abort() }, 300)
 }
 
 function ajaxSuccess(response) {
@@ -157,13 +160,12 @@ function ajaxSuccess(response) {
   }
   // Generate the products in the DOM after we get all of the response items
   generateProducts();
-  return true;
+  consecutive_failed_ajax_requests = 0;
 }
 
 function ajaxFail(error) {
   console.log("AJAX ERROR")
   console.log(error);
-  return false;
 }
 
 // My timer declaration
