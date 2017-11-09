@@ -6,6 +6,7 @@ This is our repo for our term long web app project.
 * [Assignment-2](https://github.com/jungkumseok/cpen400a-fall2017-assignment2)
 * [Assignment-3](https://github.com/jungkumseok/cpen400a-fall2017-assignment3)
 * [Assignment-4](https://github.com/jungkumseok/cpen400a-fall2017-assignment4)
+* [Assignment-5](https://github.com/jungkumseok/cpen400a-fall2017-assignment5)
 
 ## URL for Heroku App
 
