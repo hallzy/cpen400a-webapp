@@ -7,6 +7,9 @@ const debug = true;
 
 var inactiveTime = 0;
 
+// default to the "all" items filter
+var current_filter = "all"
+
 // USE ONLY ONE OF THE BELOW 3 URLS
 // **** Class heroku app ****
 // const urlForProducts = "https://cpen400a-bookstore.herokuapp.com/products";
@@ -85,6 +88,8 @@ window.onload = function() {
   timer = new customTimer(inactiveTimeLimit);
   timer.set();
 
+  setup_filter_buttons()
+
   // Start with the modal as hidden
   var modal = document.getElementById('cartModal');
   modal.style.display = "none";
@@ -106,7 +111,7 @@ function products_getIndexOf(product) {
 // Submit a ajax request to a given URL
 function ajaxGet(url, successCallback, errorCallback) {
   var ajaxRequest = new XMLHttpRequest();
-  ajaxRequest.open('GET', url, true);
+  ajaxRequest.open('GET', url + "/" + current_filter, true);
   ajaxRequest.responseType = 'json';
   ajaxRequest.timeout = 300
   ajaxRequest.onerror = function() {
@@ -168,7 +173,7 @@ function ajaxPost(url, successCallback, errorCallback) {
       }
   };
   // ajaxRequest.send();
-  ajaxRequest.send("cart=" + JSON.stringify(cart));
+  ajaxRequest.send("cart=" + JSON.stringify(cart) + "&filter=" + current_filter);
 }
 
 function ajaxSuccess(response) {
@@ -176,6 +181,7 @@ function ajaxSuccess(response) {
 
   console.log(response);
   var iteration = 0;
+  products = {}
   // Iterate through all the response items so that I can add them to products
   for (item in response) {
     iteration++;
@@ -777,7 +783,6 @@ function doCheckout(response) {
 }
 
 function resetAllCart(response) {
-  console.log("Why the fuck aren't you doing anything")
   // reset the cart now
   resetCartUsingTemplates();
 
@@ -791,4 +796,59 @@ function resetAllCart(response) {
   updateCartPrice()
   populateCartModal();
   ajaxSuccess(response)
+}
+
+function setup_filter_buttons() {
+  var all_filter_button = document.getElementById("all_filter");
+  var books_filter_button = document.getElementById("books_filter");
+  var clothing_filter_button = document.getElementById("clothing_filter");
+  var tech_filter_button = document.getElementById("tech_filter");
+  var gifts_filter_button = document.getElementById("gifts_filter");
+  var stationary_filter_button = document.getElementById("stationary_filter");
+  var supplies_filter_button = document.getElementById("supplies_filter");
+  // NOTE: the closure is essential for this to work correctly.
+  // I need to execute the outer function with the product name as an argument
+  // so I can pass it to the function, but I don't want to add anything yet.
+  all_filter_button.onclick = function() {
+    return function() {
+      current_filter = "all"
+      ajaxGet(urlForProducts, ajaxSuccess, ajaxFail);
+    }
+  }();
+  books_filter_button.onclick = function() {
+    return function() {
+      current_filter = "books"
+      ajaxGet(urlForProducts, ajaxSuccess, ajaxFail);
+    }
+  }();
+  clothing_filter_button.onclick = function() {
+    return function() {
+      current_filter = "clothes"
+      ajaxGet(urlForProducts, ajaxSuccess, ajaxFail);
+    }
+  }();
+  tech_filter_button.onclick = function() {
+    return function() {
+      current_filter = "tech"
+      ajaxGet(urlForProducts, ajaxSuccess, ajaxFail);
+    }
+  }();
+  gifts_filter_button.onclick = function() {
+    return function() {
+      current_filter = "gifts"
+      ajaxGet(urlForProducts, ajaxSuccess, ajaxFail);
+    }
+  }();
+  stationary_filter_button.onclick = function() {
+    return function() {
+      current_filter = "stationary"
+      ajaxGet(urlForProducts, ajaxSuccess, ajaxFail);
+    }
+  }();
+  supplies_filter_button.onclick = function() {
+    return function() {
+      current_filter = "supplies"
+      ajaxGet(urlForProducts, ajaxSuccess, ajaxFail);
+    }
+  }();
 }
