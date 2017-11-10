@@ -9,6 +9,15 @@ var appHost = 'https://cpen400a-bookstore.herokuapp.com/'; //hard-coded host url
 app.set('port', (process.env.PORT || 5000))
 app.use(express.static(__dirname + '/public'))
 
+var bodyParser = require('body-parser')
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+}));
+
+app.use(express.json());       // to support JSON-encoded bodies
+app.use(express.urlencoded()); // to support URL-encoded bodies
+
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -110,7 +119,6 @@ app.get('/products', function(request, response) {
         products_obj += imageUrl + '"}'
       }
       products_obj += '}'
-      console.log(products_obj)
       response.json(JSON.parse(products_obj))
     })
     // response.json(db.collection("products").find());
@@ -161,6 +169,68 @@ app.get('/products/:min/:max', function(request, response) {
     })
     // response.json(db.collection("products").find());
     db.close()
+  })
+})
+
+app.get('/checkout', function(request, response) {
+
+  console.log("sup yo")
+  response.header("Access-Control-Allow-Origin", "*");
+  response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+})
+
+app.post('/checkout', function(request, response) {
+
+  response.header("Access-Control-Allow-Origin", "*");
+  response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+  var cart = JSON.parse(request.body.cart);
+  // console.log("request: " + cart.items["Mice"])
+
+  // Reduce the stock of the DB
+  // for (var item in cart.items) {
+  //   MongoClient.connect(db_url, function(err, db) {
+  //     if (err) throw error;
+  //     var myquery = { name: item  };
+  //     var newvalues = { $set : {quantity: cart.items[item]} };
+  //     db.collection("products").updateOne(myquery, newvalues, function(err, res) {
+  //       if (err) throw err;
+  //       db.close();
+  //     });
+  //   })
+  // }
+
+
+  // Send back the new database values
+  var products_obj = "{"
+  MongoClient.connect(db_url, function(err, db) {
+    if (err) throw error;
+    console.log("Connection successful")
+    db.collection("products").find({}).toArray(function(err, result) {
+      if (err) throw err
+      for (var i in result) {
+        if (i != 0) products_obj += ','
+        var r_name = result[i].name
+        var r_price = result[i].price
+        var r_quantity = result[i].quantity
+        var r_imageUrl = result[i].imageUrl
+        console.log("i = " + i)
+        if (cart.items[r_name]) {
+          // it exists in the cart, so bring the quantity down
+          r_quantity -= cart.items[r_name]
+          var myquery = { "name": r_name };
+          var newvalues = { $set : {"quantity": r_quantity} };
+          db.collection("products").updateOne(myquery, newvalues, function(err, res) {
+            if (err) throw err;
+          });
+        }
+        products_obj += '"' + r_name + '":{"name":"' + r_name + '","price":'
+        products_obj += r_price + ',"quantity":' + r_quantity + ',"imageUrl":"'
+        products_obj += r_imageUrl + '"}'
+      }
+      products_obj += '}'
+      response.json(JSON.parse(products_obj))
+    })
   })
 })
 

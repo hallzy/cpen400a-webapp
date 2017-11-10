@@ -38,7 +38,7 @@ Element.prototype.remove = function() {
 // Current user's cart (initially, empty).
 var Cart = function() {
   this.price = 0;
-  this.items = [];
+  this.items = {};
 }
 
 // Get the total amount of items that are in the cart altogether
@@ -134,6 +134,41 @@ function ajaxGet(url, successCallback, errorCallback) {
       }
   };
   ajaxRequest.send();
+}
+
+// Submit a ajax request to a given URL
+function ajaxPost(url, successCallback, errorCallback) {
+  var ajaxRequest = new XMLHttpRequest();
+  ajaxRequest.open('POST', url, true);
+  ajaxRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  ajaxRequest.responseType = 'json';
+  ajaxRequest.timeout = 300
+  ajaxRequest.onerror = function() {
+    consecutive_failed_ajax_requests++;
+    errorCallback(ajaxRequest.response)
+    // If we exceed 10 failed attempts, just kill the ajax request.
+    if (consecutive_failed_ajax_requests >= 10) {
+      alert("Failed to Fetch Products From Server... Retry")
+    }
+    else {
+      // If we still haven't reached the 10 failed attempts, then go again
+      ajaxPost(url, successCallback, errorCallback)
+    }
+  }
+  ajaxRequest.ontimeout = ajaxRequest.onerror
+  ajaxRequest.onabort = ajaxRequest.onerror
+  ajaxRequest.onload = function() {
+    var ajaxStatus = ajaxRequest.status;
+    // if the readyState is 4 that means the operation is done
+      if (this.status == 200) {
+        successCallback(ajaxRequest.response);
+      }
+      else {
+        ajaxRequest.onerror()
+      }
+  };
+  // ajaxRequest.send();
+  ajaxRequest.send("cart=" + JSON.stringify(cart));
 }
 
 function ajaxSuccess(response) {
@@ -729,6 +764,9 @@ function doCheckout(response) {
       alertMessage += "\"" + item + "\" has quantity of " +
                        cart.items[item] + "\n"
     }
+    // Perform the ajax request for the checkout
+    const urlForCheckout = "http://localhost:5000/checkout";
+    ajaxPost(urlForCheckout, resetAllCart, ajaxFail);
   }
   // Make the alerts
   alert(alertMessage)
@@ -736,4 +774,21 @@ function doCheckout(response) {
 
   // if we press the checkout button reset the timer
   timer.reset()
+}
+
+function resetAllCart(response) {
+  console.log("Why the fuck aren't you doing anything")
+  // reset the cart now
+  resetCartUsingTemplates();
+
+  // Remove the items that have 0 quantity
+  for (var item in cart.items) {
+    delete cart.items[item]
+    updateAddRemoveButtons(products[item])
+  }
+
+  // Update the cart
+  updateCartPrice()
+  populateCartModal();
+  ajaxSuccess(response)
 }
