@@ -185,27 +185,16 @@ app.post('/checkout', function(request, response) {
   response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
   var cart = JSON.parse(request.body.cart);
-  // console.log("request: " + cart.items["Mice"])
-
-  // Reduce the stock of the DB
-  // for (var item in cart.items) {
-  //   MongoClient.connect(db_url, function(err, db) {
-  //     if (err) throw error;
-  //     var myquery = { name: item  };
-  //     var newvalues = { $set : {quantity: cart.items[item]} };
-  //     db.collection("products").updateOne(myquery, newvalues, function(err, res) {
-  //       if (err) throw err;
-  //       db.close();
-  //     });
-  //   })
-  // }
-
 
   // Send back the new database values
   var products_obj = "{"
   MongoClient.connect(db_url, function(err, db) {
     if (err) throw error;
     console.log("Connection successful")
+    var myobj = { "cart": JSON.stringify(cart.items), "total": cart.price  };
+    db.collection("orders").insertOne(myobj, function(err, result) {
+      if (err) throw err
+    })
     db.collection("products").find({}).toArray(function(err, result) {
       if (err) throw err
       for (var i in result) {
