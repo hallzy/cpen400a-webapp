@@ -172,13 +172,6 @@ app.get('/products/:min/:max', function(request, response) {
   })
 })
 
-app.get('/checkout', function(request, response) {
-
-  console.log("sup yo")
-  response.header("Access-Control-Allow-Origin", "*");
-  response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-})
-
 app.post('/checkout', function(request, response) {
 
   response.header("Access-Control-Allow-Origin", "*");
