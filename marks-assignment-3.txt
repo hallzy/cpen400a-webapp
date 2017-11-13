@@ -1,0 +1,13 @@
+Task 1A		2
+Task 1B		2
+Task 2		1
+Task 3		3
+Task 4		2
+Task 5		4
+Code Quality		3
+Scalability		3
+Bonus		1
+Total		21
+
+Comments:
+-
