@@ -96,8 +96,29 @@ db.orders.insertOne(
   }
 )
 
-db.users.insertOne(
+db.users.insertMany([
   {
     token: "Xoe2inasd"
-  }
-)
+  },
+  {
+    token: "1"
+  },
+  {
+    token: "2"
+  },
+  {
+    token: "3"
+  },
+  {
+    token: "13"
+  },
+  {
+    token: "12"
+  },
+  {
+    token: "23"
+  },
+  {
+    token: "123"
+  },
+])

@@ -12,6 +12,17 @@ This is our repo for our term long web app project.
 
 [heroku](https://secret-beyond-19352.herokuapp.com/products)
 
+### Some Notes about Heroku and Mongo
+
+Start the heroku server locally with `heroku local web`
+
+If after doing that information still fails to load from mongodb, then make sure
+the service is running: `sudo service mongod start`
+
+Enter the mongo shell with `mongo` and see if it is now working.
+
+To load the `initdb.js` file: `load("initdb.js")` from the mongo shell
+
 ## Git Hooks
 
 ### Pre-Commit Hooks

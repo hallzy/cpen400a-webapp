@@ -5,6 +5,9 @@
 // Set this to true to get some useful console outputs
 const debug = true;
 
+// Hard-coded user token for authentication.
+const user_token = "123";
+
 var inactiveTime = 0;
 
 // default to the "all" items filter
@@ -111,7 +114,7 @@ function products_getIndexOf(product) {
 // Submit a ajax request to a given URL
 function ajaxGet(url, successCallback, errorCallback) {
   var ajaxRequest = new XMLHttpRequest();
-  ajaxRequest.open('GET', url + "/" + current_filter, true);
+  ajaxRequest.open('GET', url + "/" + current_filter + "/" + user_token, true);
   ajaxRequest.responseType = 'json';
   ajaxRequest.timeout = 300
   ajaxRequest.onerror = function() {
@@ -173,7 +176,8 @@ function ajaxPost(url, successCallback, errorCallback) {
       }
   };
   // ajaxRequest.send();
-  ajaxRequest.send("cart=" + JSON.stringify(cart) + "&filter=" + current_filter);
+  ajaxRequest.send("cart=" + JSON.stringify(cart) + "&filter=" +
+                   current_filter + "&user_token=" + user_token);
 }
 
 function ajaxSuccess(response) {
