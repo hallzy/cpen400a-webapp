@@ -10,6 +10,8 @@ This is our repo for our term long web app project.
 
 ## Server Endpoints
 
+The actual website is hosted at `/` as per the bonus task.
+
 To retrieve the products from the server use `/products/:filter/:user_token`. A
 user token must be passed and valid for the request to work, and a filter must
 also be passed. To get all products pass the filter `all`.
