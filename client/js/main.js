@@ -2,9 +2,6 @@
 // ***   Variable Declarations
 // *****************************************************************************
 
-// Set this to true to get some useful console outputs
-const debug = true;
-
 // Hard-coded user token for authentication.
 const user_token = "123";
 
@@ -181,9 +178,6 @@ function ajaxPost(url, successCallback, errorCallback) {
 }
 
 function ajaxSuccess(response) {
-  console.log("AJAX SUCCESS")
-
-  console.log(response);
   var iteration = 0;
   products = {}
   // Iterate through all the response items so that I can add them to products
@@ -209,8 +203,8 @@ function ajaxSuccess(response) {
 }
 
 function ajaxFail(error) {
-  console.log("AJAX ERROR")
-  console.log(error);
+  // Don't want to do anything
+  return
 }
 
 // My timer declaration
@@ -280,11 +274,6 @@ function addToCart(product) {
   // Reset the Timer now that we are done.
   timer.reset();
 
-  // output the current state of the product stock and cart if we are debugging.
-  if (debug) {
-    console.log(cart)
-    console.log(products)
-  }
   // Now populate our Modal
   populateCartModal();
 
@@ -321,11 +310,6 @@ function removeFromCart(product) {
   // Reset the Timer now that we are done.
   timer.reset();
 
-  // output the current state of the product stock and cart if we are debugging.
-  if (debug) {
-    console.log(cart)
-    console.log(products)
-  }
   // Now populate our Modal
   populateCartModal();
 
@@ -695,18 +679,12 @@ function doCheckout(response) {
       alertMessage += "\"" + item + "\" has increased from $" +
                    previous_item_price.toFixed(2) + " to $" +
                    new_item_price.toFixed(2) + "\n"
-      console.log("The price for \"" + item + "\" has increased from $" +
-                   previous_item_price.toFixed(2) + " to $" +
-                   new_item_price.toFixed(2))
     }
     if (new_item_price < previous_item_price) {
       somethingChanged = true;
       alertMessage += "\"" + item + "\" has decreased from $" +
                    previous_item_price.toFixed(2) + " to $" +
                   new_item_price.toFixed(2) + "\n"
-      console.log("The price for \"" + item + "\" has decreased from $" +
-                   previous_item_price.toFixed(2) + " to $" +
-                  new_item_price.toFixed(2))
     }
     // Update the button visuals
     updateAddRemoveButtons(products[item])
@@ -731,11 +709,6 @@ function doCheckout(response) {
     // Update the number of total products by taking away what was in the cart.
     products[item].quantity -= cart.items[item]
 
-    if (new_item_quantity > previous_item_quantity) {
-      console.log("The stock of \"" + item + "\" has increased from " +
-                   previous_item_quantity + " to " +
-                   new_item_quantity)
-    }
     if (new_item_quantity < previous_item_quantity) {
       // If I had to reduce the number of of this item in the cart let the user
       // know
@@ -745,9 +718,6 @@ function doCheckout(response) {
           previous_item_quantity + " to " + new_item_quantity + "\n"
           cart.items[item]
       }
-      console.log("The stock of \"" + item + "\" has decreased from " +
-                   previous_item_quantity + " to " +
-                  new_item_quantity)
     }
     updateAddRemoveButtons(products[item])
   }

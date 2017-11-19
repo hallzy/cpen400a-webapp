@@ -8,6 +8,39 @@ This is our repo for our term long web app project.
 * [Assignment-4](https://github.com/jungkumseok/cpen400a-fall2017-assignment4)
 * [Assignment-5](https://github.com/jungkumseok/cpen400a-fall2017-assignment5)
 
+## Server Endpoints
+
+To retrieve the products from the server use `/products/:filter/:user_token`. A
+user token must be passed and valid for the request to work, and a filter must
+also be passed. To get all products pass the filter `all`.
+
+* Possible filters:
+  * all
+  * books
+  * clothes
+  * tech
+  * gifts
+  * stationary
+  * supplies
+
+To return products that are between a price range use
+`/products/:min/:max/:user_token`. Again, the user token must be valid and a min
+and max value must be passed.
+
+* The checkout endpoint gets sent 3 variables in the post request:
+  * cart
+  * filter
+  * user_token
+
+The cart is the current state of the cart so that the server knows what needs to
+be checked out, the filter is passed and can be any of the filters mentioned
+above (This is so that the server returns the updated product list for the
+currently set filter. ie: if the books filter was set before checkout was
+initiated, I want the books filter to still be on when the checkout is done. By
+passing the filter I know what items I should return back to the client to serve
+up on the page). User token is as normal and needs to be valid for the request
+to work.
+
 ## URL for Heroku App
 
 [heroku](https://secret-beyond-19352.herokuapp.com/products)
