@@ -10,11 +10,6 @@ var inactiveTime = 0;
 // default to the "all" items filter
 var current_filter = "all"
 
-// USE ONLY ONE OF THE BELOW 3 URLS
-// **** Class heroku app ****
-// const urlForProducts = "https://cpen400a-bookstore.herokuapp.com/products";
-// **** Our custom Servers, one on Heroku, one is local ****
-// const urlForProducts = "https://secret-beyond-19352.herokuapp.com/products";
 const urlForProducts = "http://localhost:5000/products";
 
 // Timeout time is 300 seconds
